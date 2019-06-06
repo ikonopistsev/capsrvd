@@ -1,0 +1,14 @@
+{
+    "#amqp": { 
+        "robomt4": {
+            "url": "amqp://robomt4:444@server01:5672/robomt4"
+        }
+    },
+
+    "server":{
+	"robomt4": {
+    	    "amqp": "robomt4",
+    	    "listen": { "host":"127.0.0.1", "port": 6033 }
+	}
+    }
+}

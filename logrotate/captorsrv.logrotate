@@ -1,0 +1,13 @@
+/var/log/capsrvd/*.txt {
+    weekly
+    missingok
+    rotate 52
+    compress
+    delaycompress
+    notifempty
+    create 644 capsrvd capsrvd
+    sharedscripts
+    postrotate
+    /bin/kill -hup `/usr/bin/lsof -t /var/log/capsrvd/*.txt*`
+    endscript
+}

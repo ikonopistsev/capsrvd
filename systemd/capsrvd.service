@@ -1,0 +1,22 @@
+[Unit]
+Description=capsrvd for rabbitmq
+After=network-online.target
+
+[Service]
+Restart=on-failure
+WorkingDirectory=/home/capsrvd
+ExecStart=/usr/bin/node /home/meil/capsrvd/capsrvd.js
+User=capsrvd
+Group=capsrvd
+
+[Install]
+WantedBy=multi-user.target
+
+# Change [capsrvd].service name if needed
+# create system user
+# adduser -r capsrvd
+# create working dir /home/capsrvd
+# Save it and copy to /lib/systemd/system/[capsrvd].service
+# systemctl daemon-reload
+# systemctl enable myapp
+# systemctl restart myapp
