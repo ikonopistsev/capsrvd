@@ -1,13 +1,14 @@
 [Unit]
-Description=capsrvd for rabbitmq
+Description=capsrvd
 After=network-online.target
 
 [Service]
+Type=simple
+#Restart=always
 Restart=on-failure
 WorkingDirectory=/home/capsrvd
-ExecStart=/usr/bin/node /home/meil/capsrvd/capsrvd.js
+ExecStart=/usr/bin/node /home/capsrvd/capsrvd.js
 User=capsrvd
-Group=capsrvd
 
 [Install]
 WantedBy=multi-user.target

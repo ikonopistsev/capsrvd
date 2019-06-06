@@ -7,8 +7,11 @@
 
     "server":{
 	"robomt4": {
-    	    "amqp": "robomt4",
-    	    "listen": { "host":"127.0.0.1", "port": 6033 }
+	    "amqp": "robomt4",
+	    "listen": { "host":"127.0.0.1", "port": 6033 }
 	}
-    }
+    },
+    
+    "LogFile":"/var/log/capsrvd/capsrvd.txt",
+    "Develop":true
 }
