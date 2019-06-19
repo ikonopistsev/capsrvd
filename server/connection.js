@@ -63,9 +63,11 @@ on_data(data_buf) {
 }
 
 on_error(err) {
-    const { srv_name, connId, remoteAddress, sock, packet, ctrl, receive_size, timestamp } = this;
+    const { srv_name, connId, remoteAddress, sock, packet, 
+        ctrl, receive_size, timestamp } = this;
 
-    u.error(srv_name, connId, remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp), err, this.time_str());
+    u.error(srv_name, connId, remoteAddress, "receive=" + receive_size, 
+        "time=" + u.time_diff(timestamp), err, this.time_str());
 
     sock.destroy();
 
@@ -78,7 +80,8 @@ on_error(err) {
 }
 
 on_close() {
-    const { sock, ctrl, packet, connId, remoteAddress, srv_name, receive_size, timestamp } = this;
+    const { sock, ctrl, packet, connId, remoteAddress, 
+        srv_name, receive_size, timestamp } = this;
     
     sock.destroy();
 
@@ -89,7 +92,8 @@ on_close() {
         ctrl.receive();
     }
 
-    u.log(srv_name, connId, "close", remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp) );
+    u.log(srv_name, connId, "close", remoteAddress, 
+        "receive=" + receive_size, "time=" + u.time_diff(timestamp) );
 }
 
 get connId() {
@@ -161,7 +165,6 @@ parse_header(header_str) {
 }
 
 parse_data(data_buf) {
-    //u.log("parse_data", data_buf.length);
     const { srv_name, connId, remoteAddress } = this;
 
     if (data_buf.length) {
