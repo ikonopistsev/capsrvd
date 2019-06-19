@@ -193,7 +193,7 @@ publish(packet) {
                 // отправляем маршрутом по умолчанию
                 u.log("publish", message.asString());
                 channel.publish(param, param, message, option);
-            }            
+            }
         }
 
         return true;

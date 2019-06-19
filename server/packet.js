@@ -24,7 +24,9 @@ push_back(data_buf) {
 
 set_ready(val) {
     this.ready = val;
-    u.log(this.conn_id, "packet", this.cmd, this.param, u.js(this.data_arr));
+    const { cmd, param, data_arr } = this;
+    const { length } = data_arr;
+    u.log(this.conn_id, "packet", cmd, param, "size="+length, data_arr.toString());
 }
 
 set_error(val) {

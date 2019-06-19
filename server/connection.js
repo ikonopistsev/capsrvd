@@ -73,7 +73,7 @@ on_error(err) {
 }
 
 on_close() {
-    const { sock, ctrl, packet } = this;
+    const { sock, ctrl, packet, connId, remoteAddress, srv_name } = this;
     
     sock.destroy();
 
@@ -83,6 +83,8 @@ on_close() {
         // уведомляем об этом контроллер
         ctrl.receive();
     }
+
+    u.log(srv_name, connId, "close", remoteAddress);
 }
 
 get connId() {
@@ -155,7 +157,7 @@ parse_header(header_str) {
 
 parse_data(data_buf) {
     //u.log("parse_data", data_buf.length);
-    const { srv_name, conId, remoteAddress } = this;
+    const { srv_name, connId, remoteAddress } = this;
 
     if (data_buf.length) {
         const { packet } = this;
@@ -189,7 +191,7 @@ parse_data(data_buf) {
         }
 
         if (reuslt_arr.length) {
-            u.log(srv_name, conId, "chunk", u.js(reuslt_arr));
+            u.log(srv_name, connId, "chunk", reuslt_arr.toString());
             packet.push_back(reuslt_arr);
         }
 
@@ -234,8 +236,8 @@ receive_header(param_arr) {
     //u.log("receive_header", param);
     const { srv_name, connId, ctrl } = this;
     // создаем новый пакет
-    u.log(srv_name, connId, "timestamp=" + timestamp.toJSON(),  "method=" + method, "param=" + exchange);
-    this.packet = ctrl.new_packet(param_arr);
+    u.log(srv_name, connId, u.js(param_arr));
+    this.packet = ctrl.new_packet(param_arr, connId);
 }
 
 }
