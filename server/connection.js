@@ -25,6 +25,8 @@ constructor(ctrl, srv_name, sock, conn_id) {
     this.conn_id = conn_id;
     // сохраняем количество принятых байт
     this.receive_size = 0;
+    // сохраняем время начала приему
+    this.timestamp = new Date();
 
     // отключаем ka
     sock.setKeepAlive(false);
@@ -61,9 +63,9 @@ on_data(data_buf) {
 }
 
 on_error(err) {
-    const { srv_name, connId, remoteAddress, sock, packet, ctrl, receive_size } = this;
+    const { srv_name, connId, remoteAddress, sock, packet, ctrl, receive_size, timestamp } = this;
 
-    u.error(srv_name, connId, remoteAddress, "receive=" + receive_size, err, this.time_str());
+    u.error(srv_name, connId, remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp), err, this.time_str());
 
     sock.destroy();
 
@@ -87,7 +89,7 @@ on_close() {
         ctrl.receive();
     }
 
-    u.log(srv_name, connId, "close", remoteAddress, "receive=" + receive_size);
+    u.log(srv_name, connId, "close", remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp));
 }
 
 get connId() {
