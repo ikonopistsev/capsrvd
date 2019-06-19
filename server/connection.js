@@ -78,7 +78,7 @@ on_error(err) {
 }
 
 on_close() {
-    const { sock, ctrl, packet, connId, remoteAddress, srv_name, receive_size } = this;
+    const { sock, ctrl, packet, connId, remoteAddress, srv_name, receive_size, timestamp } = this;
     
     sock.destroy();
 
@@ -89,7 +89,7 @@ on_close() {
         ctrl.receive();
     }
 
-    u.log(srv_name, connId, "close", remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp));
+    u.log(srv_name, connId, "close", remoteAddress, "receive=" + receive_size, "time=" + u.time_diff(timestamp) );
 }
 
 get connId() {
