@@ -168,7 +168,7 @@ publish(packet) {
     if (channel && packet.ready) {
         // формируем параметры
         const option = this.pub_opt(packet);
-        const { data_arr, cmd, param, timestamp } = packet;
+        const { data_arr, cmd, param, timestamp, conn_id } = packet;
 
         // проверяем последовательность таймстампов
         this.check_timestamp(timestamp);
@@ -185,13 +185,13 @@ publish(packet) {
             if (i < count) {
                 do {
                     const route = packet_arr[i];
-                    u.log("publish", message.toString());
+                    u.log("publish", conn_id, message.toString());
                     channel.publish(param, param + route, message, option);
 
                 } while (++i < count);
             } else {
                 // отправляем маршрутом по умолчанию
-                u.log("publish", message.toString());
+                u.log("publish", conn_id, message.toString());
                 channel.publish(param, param, message, option);
             }
         }
