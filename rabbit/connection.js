@@ -185,11 +185,13 @@ publish(packet) {
             if (i < count) {
                 do {
                     const route = packet_arr[i];
+                    u.log("publish", message.asString());
                     channel.publish(param, param + route, message, option);
 
                 } while (++i < count);
             } else {
                 // отправляем маршрутом по умолчанию
+                u.log("publish", message.asString());
                 channel.publish(param, param, message, option);
             }            
         }

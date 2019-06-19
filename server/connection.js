@@ -3,12 +3,11 @@
 const u = require("../unit");
 
 const chunk_end = '\n\n';
-const route_start = '\r';
 const endl = '\n';
 
 module.exports = class connection {
 
-constructor(ctrl, srv_name, sock) {
+constructor(ctrl, srv_name, sock, conn_id) {
     // прием хидера
     this.packet = null;
     // буффер данных, сохраняем в него
@@ -22,6 +21,8 @@ constructor(ctrl, srv_name, sock) {
     this.srv_name = srv_name;
     // сохраняем ссылку на контроллер
     this.ctrl = ctrl;
+    // сохраняем id коннекта
+    this.conn_id = conn_id;
 
     // отключаем ka
     sock.setKeepAlive(false);
@@ -45,7 +46,7 @@ constructor(ctrl, srv_name, sock) {
         this.on_error({code: "ETIMEOUT"});
     });
 
-    //u.log(srv_name, this.remoteAddress, "connect");
+    u.log(srv_name, this.connId, "connect", this.remoteAddress);
 }
 
 on_data(data_buf) {
@@ -57,9 +58,10 @@ on_data(data_buf) {
 }
 
 on_error(err) {
-    const { srv_name, remoteAddress, sock, packet, ctrl } = this;
+    const { srv_name, connId, remoteAddress, sock, packet, ctrl } = this;
 
-    u.error(srv_name, remoteAddress, err, this.time_str());
+    u.error(srv_name, connId, remoteAddress, err, this.time_str());
+
     sock.destroy();
 
     if (packet) {
@@ -81,6 +83,10 @@ on_close() {
         // уведомляем об этом контроллер
         ctrl.receive();
     }
+}
+
+get connId() {
+    return "id=" + this.conn_id;
 }
 
 get remoteAddressLocal() {
@@ -149,6 +155,7 @@ parse_header(header_str) {
 
 parse_data(data_buf) {
     //u.log("parse_data", data_buf.length);
+    const { srv_name, conId, remoteAddress } = this;
 
     if (data_buf.length) {
         const { packet } = this;
@@ -181,7 +188,8 @@ parse_data(data_buf) {
             }
         }
 
-        if (reuslt_arr.length) {    
+        if (reuslt_arr.length) {
+            u.log(srv_name, conId, "chunk", u.js(reuslt_arr));
             packet.push_back(reuslt_arr);
         }
 
@@ -224,10 +232,10 @@ time_str() {
 
 receive_header(param_arr) {
     //u.log("receive_header", param);
-    const { srv_name, remoteAddress, ctrl } = this;
+    const { srv_name, connId, ctrl } = this;
     // создаем новый пакет
+    u.log(srv_name, connId, "timestamp=" + timestamp.toJSON(),  "method=" + method, "param=" + exchange);
     this.packet = ctrl.new_packet(param_arr);
-    //u.log(srv_name, remoteAddress, "timestamp=" + timestamp.toJSON(),  "method=" + method, "param=" + exchange);
 }
 
 }

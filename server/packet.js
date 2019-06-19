@@ -3,7 +3,7 @@ const connection = require("./connection.js");
 
 module.exports = class packet {
 
-constructor(param_arr) { 
+constructor(param_arr, conn_id) { 
     this.timestamp = param_arr[0];
     this.cmd = param_arr[1];
     this.param = param_arr[2];
@@ -14,6 +14,7 @@ constructor(param_arr) {
     this.data_arr = [];
     // флаг приема полного json'a
     this.advanced_msg = false;
+    this.conn_id = conn_id;
 }
 
 push_back(data_buf) {
@@ -23,6 +24,7 @@ push_back(data_buf) {
 
 set_ready(val) {
     this.ready = val;
+    u.log(this.conn_id, "packet", this.cmd, this.param, u.js(this.data_arr));
 }
 
 set_error(val) {

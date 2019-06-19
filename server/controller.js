@@ -8,8 +8,10 @@ const net = require("net");
 module.exports = class controller {
 
 constructor(amqp, srv_name, conf) { 
+    this.conn_id = 0;
+
     const server = net.createServer((sock) => {
-        new conn(this, srv_name, sock);
+        new conn(this, srv_name, sock, ++this.conn_id);
     });
 
     server.on("error", (e) => {
@@ -42,9 +44,9 @@ run() {
     }
 }
 
-new_packet(param_arr) {
+new_packet(param_arr, conn_id) {
     const { packet_arr } = this;
-    const result = new packet(param_arr);
+    const result = new packet(param_arr, conn_id);
     packet_arr.push(result);
     // сортировку пока не будем делать, но она возможна
     // коннекты принимаются по очереди
