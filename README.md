@@ -1,3 +1,2 @@
 # capsrvd
-
 capsrvd for rabbitmq
