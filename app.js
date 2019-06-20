@@ -13,12 +13,6 @@ module.exports = class app {
     }
 
 
-
-
-
-
-
-
     init_amqp(conf) {
         return new amqp(conf);
     }
