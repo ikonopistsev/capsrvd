@@ -36,4 +36,11 @@ set_error(val) {
     }
 }
 
+toString() {
+    const { timestamp, cmd, param, data_arr } = this;
+    let result = timestamp + ' ' + cmd + ' ' + param;
+    result += ' ' + u.js(data_arr);
+    return result;
+}
+
 }

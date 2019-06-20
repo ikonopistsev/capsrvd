@@ -165,7 +165,7 @@ check_timestamp(curr) {
 
 publish(packet) {
     const { conn_name, channel } = this;
-    if (channel && packet.ready) {
+    if (channel) {
         // формируем параметры
         const option = this.pub_opt(packet);
         const { data_arr, cmd, param, timestamp, conn_id } = packet;

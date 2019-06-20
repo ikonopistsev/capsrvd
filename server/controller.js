@@ -27,6 +27,7 @@ constructor(amqp, srv_name, conf) {
     this.conf = conf;
 
     this.server = server;
+    this.retry = null;
 }
 
 run() {
@@ -56,23 +57,42 @@ new_packet(param_arr, conn_id) {
 
 // событие окончания прием пакета
 receive() {
-    const { packet_arr, amqp, srv_name } = this;
-    let p = packet_arr.shift();
-    while (p) {
+    const { retry } = this;
+    // требуется ли повторная перепроверка
+    if (retry) {
+        clearImmediate(retry);
+        this.retry = null;
+    }        
+
+    // определяем есть ли данные для рассылки
+    const { amqp, srv_name, packet_arr } = this;
+    while (packet_arr.length) {
+        let p = packet_arr[0];
         if (p.ready) {
+            // если пакет готов пытаемся его разослать
             if (!amqp.publish(p)) {
-                u.error(srv_name, "->", amqp.conn_name);
+                // если не разослали выходим без перепроведения
+                u.error(srv_name, conn_id, "->", amqp.conn_name);
                 break;
             } else {
-                //u.log(srv_name, "->", amqp.conn_name);
+                // удаляем обработанный пакет
+                packet_arr.shift();
             }
-        } else if (!p.error) {
+        } else if (p.error) {
+            // говорим что пакет с ошибкой
+            u.error(srv_name, conn_id, "bad", p.toString());
+            // пропускаем его переходим к следующему
+            packet_arr.shift();
+        } else {
+            // иначе пакет просто не принят
+            // запускаем повторную рассылку
+            this.retry = setImmediate(()=>{
+                this.receive();
+            });
+            // выходим
             break;
         }
-        p = packet_arr.shift();
     }
-}
-
 }
 
 const dynamic_sort = (property) => {
