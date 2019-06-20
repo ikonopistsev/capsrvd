@@ -72,7 +72,7 @@ receive() {
             // если пакет готов пытаемся его разослать
             if (!amqp.publish(p)) {
                 // если не разослали выходим без перепроведения
-                u.error(srv_name, "->", amqp.conn_name);
+                u.error(srv_name, "->", amqp.conn_name, p.toString());
                 break;
             } else {
                 // удаляем обработанный пакет
