@@ -9,7 +9,7 @@ We need to send to Rabbitmq everything that we get inserted into out database
 
 You can use it the next way
 
-####!!! Its very important to have captor plugin installed in mysql to make this service work
+!!! Its very important to have captor plugin installed in mysql to make this service work
 Check here https://github.com/ikonopistsev/captor
 
 Make a trigger in your mysql database that on each insert row in database it will send 
