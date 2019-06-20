@@ -5,6 +5,7 @@ const amqp = require("./rabbit");
 const server = require("./server");
 const fs = require("fs");
 
+
 module.exports = class app {
     constructor(conf) {
         this.amqp = this.init_amqp(conf["#amqp"]);
