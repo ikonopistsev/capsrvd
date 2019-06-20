@@ -1,17 +1,24 @@
 {
     "#amqp": { 
-        "robomt4": {
-            "url": "amqp://robomt4:444@server01:5672/robomt4"
+        "one": {
+            "url": "amqp://bob:123@localhost:5672/one"
+        },
+        "two": {
+            "url": "amqp://max:100500@localhost:5672/two"
         }
     },
 
     "server":{
-	"robomt4": {
-	    "amqp": "robomt4",
-	    "listen": { "host":"127.0.0.1", "port": 6033 }
-	}
+    	"db-one": {
+    	    "amqp": "one",
+    	    "listen": { "host":"127.0.0.1", "port": 6033 }
+    	},
+        "db-two": {
+            "amqp": "two",
+            "listen": { "host":"127.0.0.1", "port": 6034 }
+        }
     },
     
-    "!LogFile":"/var/log/capsrvd/capsrvd.txt",
-    "!Develop":true
+    "LogFile":"/var/log/capsrvd/capsrvd.txt",
+    "Develop":false
 }
