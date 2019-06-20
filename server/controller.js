@@ -72,7 +72,7 @@ receive() {
             // если пакет готов пытаемся его разослать
             if (!amqp.publish(p)) {
                 // если не разослали выходим без перепроведения
-                u.error(srv_name, "->", amqp.conn_name, "publish", p.toString());
+                u.error(srv_name, "->", amqp.conn_name, "cached", p.toString());
                 break;
             } else {
                 // удаляем обработанный пакет
@@ -80,7 +80,7 @@ receive() {
             }
         } else if (p.error) {
             // говорим что пакет с ошибкой
-            u.error(srv_name, "bad", p.toString());
+            u.error(srv_name, "reject", p.toString());
             // пропускаем его переходим к следующему
             packet_arr.shift();
         } else {
