@@ -37,8 +37,8 @@ set_error(val) {
 }
 
 toString() {
-    const { timestamp, cmd, param } = this;
-    return timestamp + ' ' + cmd + ' ' + param;
+    const { timestamp, cmd, param, conn_id } = this;
+    return conn_id + ' ' + timestamp + ' ' + cmd + ' ' + param;
 }
 
 }
