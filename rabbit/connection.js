@@ -163,6 +163,7 @@ check_timestamp(curr) {
 }
 
 
+// рассылаем пакеты с флагом ready=true
 publish(packet) {
     const { conn_name, channel } = this;
     if (channel) {
