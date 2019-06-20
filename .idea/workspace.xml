@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d6517c97-5d10-4dda-8184-945b1e72049c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/systemd/capsrvd.service" beforeDir="false" afterPath="$PROJECT_DIR$/systemd/capsrvd.service" afterDir="false" />
-    </list>
+    <list default="true" id="d6517c97-5d10-4dda-8184-945b1e72049c" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,26 +130,6 @@
               <item name="capsrvd" type="b2602c69:ProjectViewProjectNode" />
               <item name="capsrvd" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="capsrvd" type="b2602c69:ProjectViewProjectNode" />
-              <item name="capsrvd" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="capsrvd" type="b2602c69:ProjectViewProjectNode" />
-              <item name="capsrvd" type="462c0819:PsiDirectoryNode" />
-              <item name="systemd" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="capsrvd" type="b2602c69:ProjectViewProjectNode" />
-              <item name="capsrvd" type="462c0819:PsiDirectoryNode" />
-              <item name="sysv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="capsrvd" type="b2602c69:ProjectViewProjectNode" />
-              <item name="capsrvd" type="462c0819:PsiDirectoryNode" />
-              <item name="unit" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -238,15 +213,21 @@
       <option name="project" value="LOCAL" />
       <updated>1561035428357</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="edit readme">
+      <created>1561037012492</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1561037012492</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3140000" />
+    <option name="totallyTimeSpent" value="3389000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="npm" side_tool="true" />
       <window_info id="Favorites" side_tool="true" />
@@ -276,7 +257,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ss" />
     <MESSAGE value="tst" />
-    <option name="LAST_COMMIT_MESSAGE" value="tst" />
+    <MESSAGE value="edit readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit readme" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app.js">
