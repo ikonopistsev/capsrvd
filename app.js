@@ -12,6 +12,10 @@ module.exports = class app {
         this.server = this.init_server(conf.server);
     }
 
+
+
+
+
     init_amqp(conf) {
         return new amqp(conf);
     }
