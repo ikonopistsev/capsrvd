@@ -7,7 +7,7 @@ const endl = '\n';
 
 module.exports = class connection {
 
-constructor(ctrl, srv_name, sock, conn_id) {
+constructor(ctrl, srv_name, sock, ci) {
     // прием хидера
     this.packet = null;
     // буффер данных, сохраняем в него
@@ -22,7 +22,7 @@ constructor(ctrl, srv_name, sock, conn_id) {
     // сохраняем ссылку на контроллер
     this.ctrl = ctrl;
     // сохраняем id коннекта
-    this.conn_id = conn_id;
+    this.ci = ci;
     // сохраняем количество принятых байт
     this.receive_size = 0;
     // сохраняем время начала приему
@@ -97,7 +97,7 @@ on_close() {
 }
 
 get connId() {
-    return "id=" + this.conn_id;
+    return "id=" + this.ci;
 }
 
 get remoteAddressLocal() {

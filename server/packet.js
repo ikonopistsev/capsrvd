@@ -3,7 +3,7 @@ const connection = require("./connection.js");
 
 module.exports = class packet {
 
-constructor(param_arr, conn_id) { 
+constructor(param_arr, connId) { 
     this.timestamp = param_arr[0];
     this.cmd = param_arr[1];
     this.param = param_arr[2];
@@ -14,7 +14,7 @@ constructor(param_arr, conn_id) {
     this.data_arr = [];
     // флаг приема полного json'a
     this.advanced_msg = false;
-    this.conn_id = conn_id;
+    this.connId = connId;
 }
 
 push_back(data_buf) {
@@ -24,9 +24,9 @@ push_back(data_buf) {
 
 set_ready(val) {
     this.ready = val;
-    const { cmd, param, data_arr, conn_id } = this;
+    const { cmd, param, data_arr, connId } = this;
     const { length } = data_arr;
-    u.log(conn_id, "packet", cmd, param, "size=" + length, data_arr.toString());
+    u.log(connId, "packet", cmd, param, "size=" + length, data_arr.toString());
 }
 
 set_error(val) {
@@ -37,8 +37,8 @@ set_error(val) {
 }
 
 toString() {
-    const { timestamp, cmd, param, conn_id } = this;
-    return conn_id + ' ' + timestamp + ' ' + cmd + ' ' + param;
+    const { timestamp, cmd, param, connId } = this;
+    return connId + ' ' + timestamp + ' ' + cmd + ' ' + param;
 }
 
 }
