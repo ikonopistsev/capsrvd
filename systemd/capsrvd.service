@@ -19,5 +19,5 @@ WantedBy=multi-user.target
 # create working dir /home/capsrvd
 # Save it and copy to /lib/systemd/system/[capsrvd].service
 # systemctl daemon-reload
-# systemctl enable myapp
-# systemctl restart myapp
+# systemctl enable capsrvd
+# systemctl restart capsrvd
