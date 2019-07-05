@@ -187,13 +187,13 @@ publish(packet) {
             if (i < count) {
                 do {
                     const route = packet_arr[i];
-                    u.debug("publish", connId, message.toString());
+                    u.log("publish", connId, message.toString());
                     channel.publish(param, param + route, message, option);
 
                 } while (++i < count);
             } else {
                 // отправляем маршрутом по умолчанию
-                u.debug("publish", connId, message.toString());
+                u.log("publish", connId, message.toString());
                 channel.publish(param, param, message, option);
             }
         }

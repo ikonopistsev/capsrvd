@@ -1,5 +1,4 @@
 "use strict";
-const intel = require("intel");
 class unit {
     constructor() {
         this.localtime = false;
@@ -47,28 +46,21 @@ class unit {
         stream(this.ts(), format, ...args);
     }
 
-    debug(...args) {
-        if (intel.debug){
-      intel.debug( this.ts(),"(DBG)", ...args);
-        }
-    }
-
     log(...args) {
         if (console.log) {
             this.output(console.log, "     ", ...args);
         }
     }
 
-
     info(...args) {
-        if (intel.info) {
-            intel.info(this.ts(), "(INF)", ...args);
+        if (console.info) {
+            this.output(console.info, "(INF)", ...args);
         }
     }
 
     error(...args) {
-        if (intel.error) {
-            intel.error(this.ts(), "(ERR)", ...args);
+        if (console.error) {
+            this.output(console.error, "(ERR)", ...args);
         }
     }
 

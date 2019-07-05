@@ -50,7 +50,7 @@ constructor(ctrl, srv_name, sock, ci) {
         this.on_error({code: "ETIMEOUT"});
     });
 
-    u.debug(srv_name, this.connId, "connect", this.remoteAddress);
+    u.log(srv_name, this.connId, "connect", this.remoteAddress);
 }
 
 on_data(data_buf) {
@@ -92,7 +92,7 @@ on_close() {
         ctrl.receive();
     }
 
-    u.debug(srv_name, connId, "close", remoteAddress,
+    u.log(srv_name, connId, "close", remoteAddress,
         "receive=" + receive_size, "time=" + u.time_diff(timestamp) );
 }
 
@@ -123,7 +123,7 @@ concat(data_buf) {
 }
 
 parse(data_buf) {
-    //u.debug("parse");
+    //u.log("parse");
     const { sock, srv_name, remoteAddress } = this;
 
     let t = 0;
@@ -141,7 +141,7 @@ parse(data_buf) {
 }
 
 parse_chunk(data_buf) {
-    //u.debug("parse_chunk");
+    //u.log("parse_chunk");
     const { packet } = this;
     // приняли ли хидер
     if (packet) {
@@ -152,7 +152,7 @@ parse_chunk(data_buf) {
 }
 
 parse_header(header_str) {
-    //u.debug("parse_header");
+    //u.log("parse_header");
     const param_arr = header_str.split(" ");
     if (param_arr.length > 2) {
         // парсим время
@@ -199,7 +199,7 @@ parse_data(data_buf) {
         }
 
         if (reuslt_arr.length) {
-            u.debug(srv_name, connId, "chunk", reuslt_arr.toString());
+            u.log(srv_name, connId, "chunk", reuslt_arr.toString());
             packet.push_back(reuslt_arr);
         }
 
@@ -210,7 +210,7 @@ parse_data(data_buf) {
 }
 
 make_route_kv(json) {
-    //u.debug("make_route_kv");
+    //u.log("make_route_kv");
     let result = "";
     for (const i in json) {
         result += ".";
@@ -241,10 +241,10 @@ time_str() {
 }
 
 receive_header(param_arr) {
-    //u.debug("receive_header", param);
+    //u.log("receive_header", param);
     const { srv_name, connId, ctrl } = this;
     // создаем новый пакет
-    u.debug(srv_name, connId, u.js(param_arr));
+    u.log(srv_name, connId, u.js(param_arr));
     this.packet = ctrl.new_packet(param_arr, connId);
 }
 
