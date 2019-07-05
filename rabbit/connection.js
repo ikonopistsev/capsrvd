@@ -17,7 +17,7 @@ constructor(conn_name, conf) {
     if (!url) {
         throw { code: 100500, error: "empty url"};
     }
-
+    this.delivery_mode = conf.delivery_mode;
     this.conn_name = "@" + conn_name;   
     this.url = url;
     this.delay = 0;
@@ -146,6 +146,7 @@ pub_opt(packet) {
     if (timestamp) {
         res.timestamp = timestamp;
     }
+    res.delivery_mode = this.delivery_mode;
     res.messageId = (++this.message_id).toString();
     res.contentType = "application/json";
     return res;
