@@ -24,8 +24,8 @@ const parse = (args)=> {
     if (conf.LogFile) {
         intel.addHandler(new intel.handlers.File(conf.LogFile));
         intel.console();
-        let Develop = conf.Develop;
-        if (!Develop) {
+        const develop = conf.Develop;
+        if (!develop) {
             intel.setLevel(intel.INFO);
         }
 
@@ -33,7 +33,7 @@ const parse = (args)=> {
             intel.removeAllHandlers();
             intel.addHandler(new intel.handlers.File(conf.LogFile));
             intel.console();
-            if (!Develop) {
+            if (!develop) {
                 intel.setLevel(intel.INFO);
             }
         });
