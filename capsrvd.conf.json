@@ -1,24 +1,28 @@
 {
-    "#amqp": { 
-        "one": {
-            "url": "amqp://bob:123@localhost:5672/one"
-        },
-        "two": {
-            "url": "amqp://max:100500@localhost:5672/two"
-        }
-    },
+  "#amqp": {
+    "one": {
+      "url": "amqp://bob:123@localhost:5672/one",
+      "delivery_mode": 2
 
-    "server":{
-    	"db-one": {
-    	    "amqp": "one",
-    	    "listen": { "host":"127.0.0.1", "port": 6033 }
-    	},
-        "db-two": {
-            "amqp": "two",
-            "listen": { "host":"127.0.0.1", "port": 6034 }
-        }
     },
-    
-    "LogFile":"/var/log/capsrvd/capsrvd.txt",
-    "Develop":false
+    "two": {
+      "url": "amqp://max:100500@localhost:5672/two",
+      "delivery_mode": 1
+
+    }
+  },
+
+  "server":{
+    "db-one": {
+      "amqp": "one",
+      "listen": { "host":"127.0.0.1", "port": 6033 }
+    },
+    "db-two": {
+      "amqp": "two",
+      "listen": { "host":"127.0.0.1", "port": 6034 }
+    }
+  },
+
+  "LogFile":"/var/log/capsrvd/capsrvd.txt",
+  "Develop":false
 }

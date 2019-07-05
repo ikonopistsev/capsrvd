@@ -26,7 +26,7 @@ set_ready(val) {
     this.ready = val;
     const { cmd, param, data_arr, connId } = this;
     const { length } = data_arr;
-    u.log(connId, "packet", cmd, param, "size=" + length, data_arr.toString());
+    u.debug(connId, "packet", cmd, param, "size=" + length, data_arr.toString());
 }
 
 set_error(val) {

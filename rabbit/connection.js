@@ -17,7 +17,7 @@ constructor(conn_name, conf) {
     if (!url) {
         throw { code: 100500, error: "empty url"};
     }
-
+    this.delivery_mode = conf.delivery_mode;
     this.conn_name = "@" + conn_name;   
     this.url = url;
     this.delay = 0;
@@ -76,7 +76,7 @@ run() {
                 }, delay);
             });
 
-            u.log("connect", conn_name, "ok");
+            u.info("connect", conn_name, "ok");
             conn.createChannel()
                 .then(ch => {
                     // в документации есть
@@ -96,7 +96,7 @@ run() {
                     // return ch.assertQueue(null, { exclusive: true, durable: false })
                     //     .then(res => {
                     //         const { queue } = res;
-                    //         u.log(conn_name, "queue", queue);
+                    //         u.info(conn_name, "queue", queue);
 
                     //         // обработчик на прием данных
                     //         return ch.consume(queue, (msg) => {
@@ -106,7 +106,7 @@ run() {
                     //             }, { noAck: true, exclusive: true });
                     //     });
 
-                    u.log(conn_name, "ch", "ok");
+                    u.info(conn_name, "ch", "ok");
 
                     // сохраняем канал для отправки
                     this.channel = ch;
@@ -146,6 +146,7 @@ pub_opt(packet) {
     if (timestamp) {
         res.timestamp = timestamp;
     }
+    res.delivery_mode = this.delivery_mode;
     res.messageId = (++this.message_id).toString();
     res.contentType = "application/json";
     return res;
@@ -186,13 +187,13 @@ publish(packet) {
             if (i < count) {
                 do {
                     const route = packet_arr[i];
-                    u.log("publish", connId, message.toString());
+                    u.debug("publish", connId, message.toString());
                     channel.publish(param, param + route, message, option);
 
                 } while (++i < count);
             } else {
                 // отправляем маршрутом по умолчанию
-                u.log("publish", connId, message.toString());
+                u.debug("publish", connId, message.toString());
                 channel.publish(param, param, message, option);
             }
         }

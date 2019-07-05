@@ -18,7 +18,7 @@ constructor(amqp, srv_name, conf) {
         u.error("server", e.code);
     });
 
-    u.log("server", srv_name, "ok");
+    u.info("server", srv_name, "ok");
 
     this.packet_arr = [];
 
@@ -36,11 +36,11 @@ run() {
 
     if (host) {
        server.listen(port, host, () => {
-            u.log(srv_name, "run " + host + ":" + port);
+            u.info(srv_name, "run " + host + ":" + port);
         });
     } else {
         server.listen(port, () => {
-            u.log(srv_name, "run *:" + port);
+            u.info(srv_name, "run *:" + port);
         });
     }
 }
