@@ -21,21 +21,25 @@ const parse = (args)=> {
     }
     // парсим конфиг
     let conf = JSON.parse(fs.readFileSync(path, "utf8"));
+    let log_options = { file: conf.LogFile };
     if (conf.LogFile) {
-        intel.addHandler(new intel.handlers.File(conf.LogFile));
+        intel.addHandler(new intel.handlers.File(log_options));
         intel.console();
-        const develop = conf.Develop;
-        if (!develop) {
+        if (!conf.Develop) {
             intel.setLevel(intel.INFO);
         }
 
         process.on("SIGHUP", ()=>{
+            u.info(JSON.stringify(log_options));
+
             intel.removeAllHandlers();
-            intel.addHandler(new intel.handlers.File(conf.LogFile));
-            intel.console();
-            if (!develop) {
-                intel.setLevel(intel.INFO);
+            if (log_options.stream != null)
+            {
+                log_options.stream.close();
+                log_options = { file: conf.LogFile };
             }
+            intel.addHandler(new intel.handlers.File(log_options));
+            intel.console();
         });
     }
     return conf;
