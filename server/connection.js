@@ -44,7 +44,7 @@ constructor(ctrl, srv_name, sock, ci) {
     });
 
     // выставляем таймаут
-    sock.setTimeout(3000);
+    sock.setTimeout(600000);
     // и обработчик тайматуа
     sock.on("timeout", () => {
         this.on_error({code: "ETIMEOUT"});

@@ -48,6 +48,11 @@ const parse = (args)=> {
 try {
     const args = process.argv.slice(2);
     const theapp = new app(parse(args));
+
+    process.on("uncaughtException", err => {
+        u.error("uex", err);
+    }); 
+
     theapp.run();
 } catch (e) {
     u.error(e);
