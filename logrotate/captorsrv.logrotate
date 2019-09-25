@@ -8,6 +8,6 @@
     create 644 capsrvd capsrvd
     sharedscripts
     postrotate
-    /bin/kill -hup `/usr/bin/lsof -t /var/log/capsrvd/*.txt`
+    /bin/kill -hup `cat /var/run/capsrvd.pid`
     endscript
 }
