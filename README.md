@@ -17,7 +17,9 @@ via captor plugin the data that you insert in database to capsrvd service. The c
 will accept the data that it received from mysql and immediately sends them to RabbitMQ    
 on exchange that you set in config file. 
 
-Add
+If you have out of sockets with wait_timeout add
+
 net.ipv4.tcp_tw_reuse = 1 
 net.ipv4.tcp_tw_recycle = 1
+
 to sysctl.conf 
