@@ -16,3 +16,7 @@ Make a trigger in your mysql database that on each insert row in database it wil
 via captor plugin the data that you insert in database to capsrvd service. The capsrvd 
 will accept the data that it received from mysql and immediately sends them to RabbitMQ    
 on exchange that you set in config file. 
+
+sysctl.conf
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
