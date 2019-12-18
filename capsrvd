@@ -19,4 +19,4 @@ done
 
 LOGFILE=`jq -r .LogFile $CONF`
 
-node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1
+exec node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1

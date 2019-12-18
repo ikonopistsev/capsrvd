@@ -5,7 +5,7 @@
 const fs = require("fs");
 const u = require("./unit");
 const app = require("./app.js");
-const version = "capsrvd v2.0.0"
+const version = "capsrvd v2.0.1"
 const confpath = "/etc/capsrvd/capsrvd.conf.json";
 
 const test_log = (path) => {
