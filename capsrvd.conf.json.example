@@ -15,14 +15,14 @@
   "server":{
     "db-one": {
       "amqp": "one",
-      "listen": { "host":"127.0.0.1", "port": 6033 }
+      "listen": { "host":"127.0.0.1", "port": 6093 }
     },
     "db-two": {
       "amqp": "two",
-      "listen": { "host":"127.0.0.1", "port": 6034 }
+      "listen": { "host":"127.0.0.1", "port": 7033 }
     }
   },
 
-  "LogFile":"capsrvd.txt",
+  "LogFile":"/var/log/capsrvd/capsrvd.txt",
   "Develop":true
 }

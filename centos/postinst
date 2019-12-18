@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -e
+
+CAPSRVD_APP=capsrvd
+CAPSRVD_USER=capsrvd
+
+CAPSRVD_RUN=/usr/bin/capsrvd
+CAPSRVD_LOG=/var/log/capsrvd
+
+CAPSRVD_CONF=/etc/capsrvd
+CAPSRVD_CONF_EX=/etc/capsrvd/capsrvd.conf.json.example
+CAPSRVD_CONF_FILE=/etc/capsrvd/capsrvd.conf.json
+CAPSRVD_LR_EX=/usr/lib/capsrvd/capsrvd
+CAPSRVD_LR_FILE=/etc/logrotate.d/capsrvd
+
+echo "add user: $CAPSRVD_USER"
+
+adduser --system --no-create-home $CAPSRVD_USER
+
+# добавляем праван на запуск
+[ ! -x $CAPSRVD_RUN ] && chmod +x $CAPSRVD_RUN
+
+# изменяем доступы для директории логов
+[ -d $CAPSRVD_LOG ] && chown -R $CAPSRVD_USER $CAPSRVD_LOG
+
+# если первая установка то переименовыаем основной конфиг
+[ ! -f $CAPSRVD_CONF_FILE ] && [ -f $CAPSRVD_CONF_EX ] && mv $CAPSRVD_CONF_EX $CAPSRVD_CONF_FILE
+
+# изменяем права на директорию конфига
+[ -d $CAPSRVD_CONF ] && chmod 750 $CAPSRVD_CONF
+
+[ -d $CAPSRVD_CONF ] && chown -R root:$CAPSRVD_USER $CAPSRVD_CONF
+
+# устанавливаем скрипт логротейта
+[ ! -f $CAPSRVD_LR_FILE ] && [ -f $CAPSRVD_LR_EX ] && mv $CAPSRVD_LR_EX $CAPSRVD_LR_FILE
+
+systemctl daemon-reload
+systemctl enable $CAPSRVD_APP
+
+#systemctl restart $CAPSRVD_APP

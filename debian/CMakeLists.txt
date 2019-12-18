@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-file(READ "version.txt" FILE_VER)
-file(READ "revision.txt" FILE_REV)
+file(READ "../version.txt" FILE_VER)
+file(READ "../revision.txt" FILE_REV)
 
 # менять верисю пакета тут
 project(capsrvd VERSION ${FILE_VER})
 
-install(FILES capsrvd DESTINATION bin)
-install(FILES capsrvd.conf.json.example DESTINATION /etc/capsrvd)
+install(FILES ../capsrvd DESTINATION bin)
+install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
 install(FILES index.js DESTINATION /usr/lib/capsrvd)
-install(FILES logrotate/capsrvd DESTINATION /usr/lib/capsrvd)
-install(FILES keep DESTINATION /var/log/capsrvd)
-install(FILES systemd/capsrvd.service DESTINATION /etc/systemd/system)
+install(FILES ../logrotate/capsrvd DESTINATION /usr/lib/capsrvd)
+install(FILES ../keep DESTINATION /var/log/capsrvd)
+install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
 
 set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/postinst)
 #настройки cpack'a
