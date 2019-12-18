@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -e
+
+THAT_NAME=capsrvd
+
+# app name : capsrvd
+THAT_APP_NAME=$THAT_NAME
+
+# user name: capsrvd (change if needed)
+THAT_APP_USER=$THAT_NAME
+
+THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
+THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
+
+THAT_APP_LOGROTATEDIR=/etc/logrotate.d
+
+# /usr/logrotate.d/capsrvd
+THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
+
+#remove log dir
+[ -d $THAT_APP_LOGDIR ] &&
+	rm -rf $THAT_APP_LOGDIR
+
+#remove main config
+[ -d $THAT_APP_CONFDIR ] && \
+	rm -rf $THAT_APP_CONFDIR
+
+#remove logrotate config
+[ -f $THAT_APP_LOGROTATE ] && \
+	rm $THAT_APP_LOGROTATE
+
+# test user exists
+if id "$THAT_APP_USER" > /dev/null 2>&1; then
+	echo "remove user: $THAT_APP_USER"
+	deluser --remove-home $THAT_APP_USER
+fi
+
+
+

@@ -2,40 +2,76 @@
 
 set -e
 
-CAPSRVD_APP=capsrvd
-CAPSRVD_USER=capsrvd
+THAT_NAME=capsrvd
 
-CAPSRVD_RUN=/usr/bin/capsrvd
-CAPSRVD_LOG=/var/log/capsrvd
+# app name : capsrvd
+THAT_APP_NAME=$THAT_NAME
 
-CAPSRVD_CONF=/etc/capsrvd
-CAPSRVD_CONF_EX=/etc/capsrvd/capsrvd.conf.json.example
-CAPSRVD_CONF_FILE=/etc/capsrvd/capsrvd.conf.json
-CAPSRVD_LR_EX=/usr/lib/capsrvd/capsrvd
-CAPSRVD_LR_FILE=/etc/logrotate.d/capsrvd
+# user name: capsrvd (change if needed)
+THAT_APP_USER=$THAT_NAME
 
-echo "add user: $CAPSRVD_USER"
+THAT_APP_RUN=/usr/bin/$THAT_APP_NAME
+# no home
+THAT_APP_HOME=/var/run/$THAT_APP_NAME
 
-adduser --system --no-create-home $CAPSRVD_USER
+THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
+THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
 
-# добавляем праван на запуск
-[ ! -x $CAPSRVD_RUN ] && chmod +x $CAPSRVD_RUN
+THAT_APP_LOGROTATEDIR=/etc/logrotate.d
 
-# изменяем доступы для директории логов
-[ -d $CAPSRVD_LOG ] && chown -R $CAPSRVD_USER $CAPSRVD_LOG
+# /etc/capsrvd/capsrvd.conf.json.example
+THAT_APP_EXAPLE_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json.example
 
-# если первая установка то переименовыаем основной конфиг
-[ ! -f $CAPSRVD_CONF_FILE ] && [ -f $CAPSRVD_CONF_EX ] && mv $CAPSRVD_CONF_EX $CAPSRVD_CONF_FILE
+# /etc/capsrvd/capsrvd.conf.json
+THAT_APP_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json
 
-# изменяем права на директорию конфига
-[ -d $CAPSRVD_CONF ] && chmod 750 $CAPSRVD_CONF
+# /usr/lib/capsrvd/index.js
+THAT_APP_INDEX_SCRIPT=/usr/lib/$THAT_APP_NAME/index.js
 
-[ -d $CAPSRVD_CONF ] && chown -R root:$CAPSRVD_USER $CAPSRVD_CONF
+# /usr/share/capsrvd/capsrvd
+THAT_APP_LOGROTATE_SCRIPT=/usr/share/$THAT_APP_NAME/$THAT_APP_NAME
 
-# устанавливаем скрипт логротейта
-[ ! -f $CAPSRVD_LR_FILE ] && [ -f $CAPSRVD_LR_EX ] && mv $CAPSRVD_LR_EX $CAPSRVD_LR_FILE
+# /usr/logrotate.d/capsrvd
+THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
 
+# test user exists
+if id "$THAT_APP_USER" > /dev/null 2>&1; then
+	echo "user $THAT_APP_USER exists"
+else
+	echo "add user: $THAT_APP_USER"
+
+	adduser --system \
+		--no-create-home
+fi
+
+# setup execution on run script
+[ ! -x $THAT_APP_RUN ] && \
+	chmod +x $THAT_APP_RUN
+
+# change log directory permissions
+[ -d $THAT_APP_LOGDIR ] && \
+	chown -R $THAT_APP_USER $THAT_APP_LOGDIR
+
+# move /etc/capsrvd/capsrvd.conf.json.example to /etc/capsrvd/capsrvd.conf.json if its first installation
+[ ! -f $THAT_APP_CONF ] && [ -f $THAT_APP_EXAPLE_CONF ] && \
+	mv $THAT_APP_EXAPLE_CONF $THAT_APP_CONF
+
+# setup config directory permissions
+[ -d $THAT_APP_CONFDIR ] && \
+	chmod 750 $THAT_APP_CONFDIR && \
+	chown -R $THAT_APP_USER $THAT_APP_CONFDIR
+
+# install logrotate script
+if [ -d $THAT_APP_LOGROTATEDIR ]; then
+	[ ! -f $THAT_APP_LOGROTATE ] && [ -f $THAT_APP_LOGROTATE_SCRIPT ] && \
+		echo "instal logroate script: $THAT_APP_LOGROTATE" && \
+		cp $THAT_APP_LOGROTATE_SCRIPT $THAT_APP_LOGROTATE
+fi
+
+# update systemd configuration
 systemctl daemon-reload
-systemctl enable $CAPSRVD_APP
 
-#systemctl restart $CAPSRVD_APP
+# enable startup
+systemctl enable $THAT_APP_NAME
+
+systemctl start $THAT_APP_NAME

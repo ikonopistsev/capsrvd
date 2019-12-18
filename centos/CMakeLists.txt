@@ -19,6 +19,8 @@ install(FILES ../keep DESTINATION /var/log/capsrvd)
 install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
 
 SET(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postinst")
+SET(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/prerm")
+SET(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postrm")
 
 #настройки cpack'a
 set(CPACK_PACKAGE_VENDOR "LLC Bridge-Technology")

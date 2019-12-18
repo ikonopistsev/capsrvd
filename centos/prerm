@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+THAT_NAME=capsrvd
+
+systemctl is-active --quiet $THAT_NAME && \
+    systemctl disable $THAT_NAME && \
+    systemctl stop $THAT_NAME
+
+
