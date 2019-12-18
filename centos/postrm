@@ -18,14 +18,6 @@ THAT_APP_LOGROTATEDIR=/etc/logrotate.d
 # /usr/logrotate.d/capsrvd
 THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
 
-#remove log dir
-[ -d $THAT_APP_LOGDIR ] &&
-	rm -rf $THAT_APP_LOGDIR
-
-#remove main config
-[ -d $THAT_APP_CONFDIR ] && \
-	rm -rf $THAT_APP_CONFDIR
-
 #remove logrotate config
 [ -f $THAT_APP_LOGROTATE ] && \
 	rm $THAT_APP_LOGROTATE

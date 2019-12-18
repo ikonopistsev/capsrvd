@@ -14,7 +14,7 @@ set(CUSTOM_BUILD_VERSION ${FILE_REV})
 install(FILES ../capsrvd DESTINATION bin)
 install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
 install(FILES index.js DESTINATION /usr/lib/capsrvd)
-install(FILES ../logrotate/capsrvd DESTINATION /usr/lib/capsrvd)
+install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
 install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
 
@@ -41,7 +41,7 @@ set(CUSTOM_SUFFIX ".el7")
 #для RPM
     # необходимо выпилить автодиректории
 # указывать надо именно полные пути, хз почему
-set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST /usr /usr/lib /usr/bin /etc /etc/systemd /etc/systemd/system /var /var/log)
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST /usr /usr/lib /usr/share /usr/bin /etc /etc/systemd /etc/systemd/system /var /var/log)
 
 #добавить зависимость от субд
 set(CPACK_RPM_PACKAGE_REQUIRES "nodejs,jq,bash,systemd,logrotate,util-linux,coreutils")
