@@ -33,7 +33,7 @@ THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
 # test user exists
 if id "$THAT_APP_USER" > /dev/null 2>&1; then
 	echo "remove user: $THAT_APP_USER"
-	deluser --remove-home $THAT_APP_USER
+	userdel -f $THAT_APP_USER
 fi
 
 

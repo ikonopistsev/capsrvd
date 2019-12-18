@@ -40,8 +40,7 @@ if id "$THAT_APP_USER" > /dev/null 2>&1; then
 else
 	echo "add user: $THAT_APP_USER"
 
-	adduser --system \
-		--no-create-home
+	useradd -rMU $THAT_APP_USER
 fi
 
 # setup execution on run script
@@ -54,7 +53,7 @@ fi
 
 # move /etc/capsrvd/capsrvd.conf.json.example to /etc/capsrvd/capsrvd.conf.json if its first installation
 [ ! -f $THAT_APP_CONF ] && [ -f $THAT_APP_EXAPLE_CONF ] && \
-	mv $THAT_APP_EXAPLE_CONF $THAT_APP_CONF
+	cp $THAT_APP_EXAPLE_CONF $THAT_APP_CONF
 
 # setup config directory permissions
 [ -d $THAT_APP_CONFDIR ] && \
