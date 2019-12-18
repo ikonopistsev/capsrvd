@@ -3,49 +3,31 @@
 "use strict";
 
 const fs = require("fs");
-const intel = require("intel");
 const u = require("./unit");
 const app = require("./app.js");
-const version = "capsrvd v1.0.3"
+const version = "capsrvd v2.0.0"
+const confpath = "/etc/capsrvd/capsrvd.conf.json";
+
+const test_log = (path) => {
+    const fd = fs.openSync(path, "a+");
+    if (fd) {
+       fs.closeSync(fd);
+    }
+}
 
 const parse = (args)=> {
-    // читаем путь
-    let path = __filename;
-    if (args.length != 1) {
-        // заменяем окончание
-        path = path.substr(0, path.lastIndexOf(".")) + ".conf.json";
-    } else {
-        // если указан путь дописываем к нему файл конфига
-        let fname = path.substr(path.lastIndexOf("/") + 1);
-        fname = fname.substr(0, fname.lastIndexOf("."));
-        path = u.dir(args[0]) + fname + ".conf.json";
-    }
-    // парсим конфиг
-    let conf = JSON.parse(fs.readFileSync(path, "utf8"));
-    let log_options = { file: conf.LogFile };
-    if (conf.LogFile) {
-
-        if (!conf.Develop) {
-            intel.setLevel(intel.INFO);
+    let path = "";
+    if (args.length > 0) {
+        if ((args.length != 2) || (args[0] != "-c")) {
+           throw "no config, use: -c config.json"
         }
 
-        intel.addHandler(new intel.handlers.File(log_options));
-        intel.console();
-        u.info(version);
-
-        process.on("SIGHUP", ()=>{
-            intel.removeAllHandlers();
-            if (log_options.stream != null)
-            {
-                log_options.stream.close();
-                log_options = { file: conf.LogFile };
-            }
-            intel.addHandler(new intel.handlers.File(log_options));
-            intel.console();
-    	    u.info(version);
-        });
+        path = args[1];
+    } else {
+        path = confpath;
     }
-    return conf;
+
+    return JSON.parse(fs.readFileSync(path, "utf8"));
 }
 
 try {

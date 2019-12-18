@@ -62,7 +62,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin:/opt/bin # modify if you need
 DAEMON_ARGS="/home/capsrv/capsrvd.js /home/capsrv"  # node arguments ex. path to your app.js/server.js
                                             # NB: don't use ~/ in path
 
-DESC="betstore"                  # whatever fancy description you like
+DESC="capsrvd"                  # whatever fancy description you like
 
 NODEUSER=capsrv # USER who OWNS the daemon process (no matter whoever runs the init script)
                                             # user:group (if no group is specified, the primary GID for that user is used)

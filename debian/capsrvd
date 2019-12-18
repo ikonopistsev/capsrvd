@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+CONF=/etc/capsrvd/capsrvd.conf.json
+
+set -- $(getopt -u -o p:c: -l pid:,config: -- "$@")
+
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -c|--config) CONF=$2; shift;;
+    -p|--pid) PIDFILE=$2; shift;;
+    (--) shift; break;;
+    (*)  break;;
+    esac
+    shift
+done
+
+LOGFILE=`jq -r .LogFile $CONF`
+
+node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1

@@ -11,6 +11,8 @@ constructor(amqp, srv_name, conf) {
     // идентификатор входящего подключения
     let ci = 0;
     const server = net.createServer((sock) => {
+        // отключаем ka
+        //sock.setKeepAlive(false);
         new conn(this, srv_name, sock, ++ci);
     });
 
@@ -72,7 +74,7 @@ receive() {
             // если пакет готов пытаемся его разослать
             if (!amqp.publish(p)) {
                 // если не разослали выходим без перепроведения
-                u.error(srv_name, "->", amqp.conn_name, "cached", p.toString());
+                u.error(srv_name, "->", amqp.conn_name, "cached", p.connId);
                 break;
             } else {
                 // удаляем обработанный пакет

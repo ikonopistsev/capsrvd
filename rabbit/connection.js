@@ -25,6 +25,7 @@ constructor(conn_name, conf) {
     this.timestamp = null;
     this.server = null;
     this.prev_time = null;
+    this.prev_conn_id = null;
 }
 
 set_server(srv) {
@@ -92,20 +93,6 @@ run() {
                         conn.close();
                     });
 
-                    // создаем уникальную очередь
-                    // return ch.assertQueue(null, { exclusive: true, durable: false })
-                    //     .then(res => {
-                    //         const { queue } = res;
-                    //         u.info(conn_name, "queue", queue);
-
-                    //         // обработчик на прием данных
-                    //         return ch.consume(queue, (msg) => {
-                    //                 // пененаправляем в объект
-                    //                 this.consume(msg, ch) 
-                    //                 // подтверждения выставялем автоматически
-                    //             }, { noAck: true, exclusive: true });
-                    //     });
-
                     u.info(conn_name, "ch", "ok");
 
                     // сохраняем канал для отправки
@@ -152,55 +139,48 @@ pub_opt(packet) {
     return res;
 }
 
-check_timestamp(curr) {
-    const { prev_time } = this;
+check_timestamp(curr, connId) {
+    const { prev_time, prev_conn_id } = this;
     if (prev_time) {
         if (curr < prev_time) {
-            u.error("packet timestamp", prev_time, curr);
+            u.error("packet", "prev", prev_conn_id, prev_time, "curr", connId, curr);
         }
     }
 
     this.prev_time = curr;
+    this.prev_conn_id = connId;
 }
 
 
 // рассылаем пакеты с флагом ready=true
 publish(packet) {
+    const { connId } = packet;
     const { conn_name, channel } = this;
     if (channel) {
+        const { data_arr, method, exchange, timestamp } = packet;
         // формируем параметры
         const option = this.pub_opt(packet);
-        const { data_arr, cmd, param, timestamp, connId } = packet;
+        let exch = (exchange) ? exchange : null;
 
         // проверяем последовательность таймстампов
-        this.check_timestamp(timestamp);
+        this.check_timestamp(timestamp, connId);
 
         for (const packet_arr of data_arr) {
-            // первая строчка данные
-            // создаем буффер отправки
-            const message = Buffer.concat([packet_method, Buffer.from(cmd), 
-                packet_payload, packet_arr[0], packet_end]);
+            const message = {
+                // метод и данные должны быть всегда
+                method: method,
+                payload: packet_arr[0]
+            };
+            const route = (packet_arr.length > 1) ? packet_arr[1].toString() : null;
 
-            // следующие - маршруты
-            let i = 1;
-            const count = packet_arr.length;
-            if (i < count) {
-                do {
-                    const route = packet_arr[i];
-                    u.log("publish", connId, message.toString());
-                    channel.publish(param, param + route, message, option);
+            u.log("publish", connId, "me=" + method, 
+                "ex=" + exchange, "ro=" + route, u.js(message), u.js(option));
 
-                } while (++i < count);
-            } else {
-                // отправляем маршрутом по умолчанию
-                u.log("publish", connId, message.toString());
-                channel.publish(param, param, message, option);
-            }
+            channel.publish(exchange, route, Buffer.from(message.toString()), option);
         }
-
         return true;
     } else {
-        u.error(conn_name, "publish no channel");
+        u.error(conn_name, connId, "publish no channel");
     }
     return false;
 }

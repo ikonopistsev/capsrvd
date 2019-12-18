@@ -1,6 +1,6 @@
 {
   "name": "captorsrv",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "ikonopistsev",
   "license": "ISC",
   "dependencies": {
-    "amqplib": "^0.5.2",
+    "amqplib": "^0.5.5",
     "intel": "^1.2.0"
   }
 }

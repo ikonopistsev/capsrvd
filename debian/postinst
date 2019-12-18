@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+
+CAPSRVD_APP=capsrvd
+CAPSRVD_USER=capsrvd
+CAPSRVD_RUN=/usr/bin/$CAPSRVD_APP
+CAPSRVD_HOME=/var/run/$CAPSRVD_APP
+CAPSRVD_LOG=/var/log/$CAPSRVD_APP
+CAPSRVD_CONF=/etc/$CAPSRVD_APP
+CAPSRVD_CONF_EX=$CAPSRVD_CONF/$CAPSRVD_APP.conf.json.example
+CAPSRVD_CONF_FILE=$CAPSRVD_CONF/$CAPSRVD_APP.conf.json
+CAPSRVD_LR_EX=/usr/lib/capsrvd/$CAPSRVD_APP
+CAPSRVD_LR_FILE=/etc/logrotate.d/$CAPSRVD_APP
+
+if [ "$1" = configure ]; then
+    echo "add user: $CAPSRVD_USER"
+
+    adduser --system \
+            --quiet \
+            --home "$CAPSRVD_HOME" \
+            --no-create-home \
+            --disabled-password \
+            --group "$CAPSRVD_USER"
+
+    [ ! -x $CAPSRVD_RUN ] && chmod +x $CAPSRVD_RUN
+    [ -d $CAPSRVD_LOG ] && chown -R $CAPSRVD_USER $CAPSRVD_LOG
+    [ ! -f $CAPSRVD_CONF_FILE ] && [ -f $CAPSRVD_CONF_EX ] && mv $CAPSRVD_CONF_EX $CAPSRVD_CONF_FILE
+    [ -d $CAPSRVD_CONF ] && chmod 750 $CAPSRVD_CONF
+    [ -d $CAPSRVD_CONF ] && chown -R root:$CAPSRVD_USER $CAPSRVD_CONF
+    [ ! -f $CAPSRVD_LR_FILE ] && [ -f $CAPSRVD_LR_EX ] && mv $CAPSRVD_LR_EX $CAPSRVD_LR_FILE
+
+    systemctl daemon-reload
+
+    systemctl enable $CAPSRVD_APP
+
+    #systemctl restart $CAPSRVD_APP
+fi

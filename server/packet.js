@@ -3,30 +3,35 @@ const connection = require("./connection.js");
 
 module.exports = class packet {
 
-constructor(param_arr, connId) { 
-    this.timestamp = param_arr[0];
-    this.cmd = param_arr[1];
-    this.param = param_arr[2];
+constructor(timestamp, connId) { 
+    this.timestamp = timestamp;
+    this.connId = connId;
+
+    this.method = null;
+    this.exchange = null;
     // пакет еще не готов
     this.ready = false;
     this.error = false;
     // данные пакета
     this.data_arr = [];
-    // флаг приема полного json'a
-    this.advanced_msg = false;
-    this.connId = connId;
 }
 
-push_back(data_buf) {
-    const { data_arr } = this;
-    data_arr.push(data_buf);
-}
+receive(data_buf) {
 
-set_ready(val) {
-    this.ready = val;
-    const { cmd, param, data_arr, connId } = this;
+    const data = JSON.parse(data_buf);
+    if (data.length < 4) {
+        throw { code: 100500, error: "bad packet" };
+    }
+
+    this.method = data[1];
+    this.exchange = data[2];
+    const data_arr = data.slice(3);
+    this.data_arr = data_arr;
     const { length } = data_arr;
-    u.log(connId, "packet", cmd, param, "size=" + length, data_arr.toString());
+    const { timestamp, method, exchange, connId } = this;
+
+    u.log(connId, "size=" + length, u.js(data));
+    this.ready = true;
 }
 
 set_error(val) {
@@ -34,11 +39,6 @@ set_error(val) {
     if (val) {
         this.ready = false;
     }
-}
-
-toString() {
-    const { timestamp, cmd, param, connId } = this;
-    return connId + ' ' + timestamp + ' ' + cmd + ' ' + param;
 }
 
 }

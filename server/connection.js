@@ -2,8 +2,9 @@
 
 const u = require("../unit");
 
-const chunk_end = '\n\n';
-const endl = '\n';
+// [1576330299387,
+const minimum_header_size = 15;
+
 
 module.exports = class connection {
 
@@ -12,7 +13,7 @@ constructor(ctrl, srv_name, sock, ci) {
     this.packet = null;
     // буффер данных, сохраняем в него
     // то что не пропарсилось
-    this.prev_buf = null;
+    this.recv_buf = null;
     // сохраняем сокет
     this.sock = sock;
     // время подключения
@@ -23,16 +24,11 @@ constructor(ctrl, srv_name, sock, ci) {
     this.ctrl = ctrl;
     // сохраняем id коннекта
     this.ci = ci;
-    // сохраняем количество принятых байт
-    this.receive_size = 0;
     // сохраняем время начала приему
     this.timestamp = new Date();
 
-    // отключаем ka
-    sock.setKeepAlive(false);
-
-    sock.on("data", (data_buf) => {
-        this.on_data(data_buf);
+    sock.on("data", (chunk_buf) => {
+        this.on_data(chunk_buf);
     });
 
     sock.on("error", (err) => {
@@ -53,10 +49,10 @@ constructor(ctrl, srv_name, sock, ci) {
     u.log(srv_name, this.connId, "connect", this.remoteAddress);
 }
 
-on_data(data_buf) {
+on_data(chunk_buf) {
     try {
-        this.parse(this.concat(data_buf));
-        this.receive_size += data_buf.length;
+        this.concat(chunk_buf);
+        this.parse();
     } catch (e) {
         this.on_error(e);
     }
@@ -64,9 +60,10 @@ on_data(data_buf) {
 
 on_error(err) {
     const { srv_name, connId, remoteAddress, sock, packet, 
-        ctrl, receive_size, timestamp } = this;
+        ctrl, timestamp, recv_buf } = this;
+    const { length } = recv_buf;
 
-    u.error(srv_name, connId, remoteAddress, "receive=" + receive_size, 
+    u.error(srv_name, connId, remoteAddress, "receive=" + length, 
         "time=" + u.time_diff(timestamp), err, this.time_str());
 
     sock.destroy();
@@ -81,19 +78,24 @@ on_error(err) {
 
 on_close() {
     const { sock, ctrl, packet, connId, remoteAddress, 
-        srv_name, receive_size, timestamp } = this;
+        srv_name, recv_buf, timestamp } = this;
+    const { length } = recv_buf;
     
-    sock.destroy();
+    try {
+        if (packet) {
+            // завершаем прием
+            packet.receive(recv_buf);
+            // уведомляем об этом контроллер
+            ctrl.receive();
+        }
 
-    if (packet) {
-        // завершаем прием
-        packet.set_ready(true);
-        // уведомляем об этом контроллер
-        ctrl.receive();
+        u.log(srv_name, connId, "close", remoteAddress,
+            "receive=" + length, "time=" + u.time_diff(timestamp) );
+    
+        sock.destroy();
+    } catch (err) {
+        this.on_error(err);
     }
-
-    u.log(srv_name, connId, "close", remoteAddress,
-        "receive=" + receive_size, "time=" + u.time_diff(timestamp) );
 }
 
 get connId() {
@@ -111,121 +113,41 @@ get remoteAddress() {
     const { sock, remoteAddressLocal,  } = this;
     const port_name = "remotePort:" + sock.remotePort;
     return (remoteAddressLocal) ? port_name:
-        sock.remoteAddress + ":" + sock.remotePort;
+        sock.remoteAddress + ":" + sock.remotePport;
 }
 
-concat(data_buf) {
-    const { prev_buf } = this;
-    const result = (prev_buf) ? 
-        Buffer.concat([prev_buf, data_buf]) : data_buf;
-    this.prev_buf = null;
-    return result;
+concat(chunk_buf) {
+    const { recv_buf } = this;
+    this.recv_buf = (recv_buf) ? 
+        Buffer.concat([recv_buf, chunk_buf]) : chunk_buf;
 }
 
-parse(data_buf) {
-    //u.log("parse");
-    const { sock, srv_name, remoteAddress } = this;
+parse() {
+    const { sock, srv_name, remoteAddress, packet, recv_buf } = this;    
+    const { length } = recv_buf;
+    
+    // проверяем приняли ли хидер
+    // если хидер не приняли, провреяем пришло ли нужное количество байт
+    // первый параметр в протоколе timestamp
+    if (!packet && (length >= minimum_header_size)) {
+        // вырезаем начало буфера с таймстампом
+        const header_str = recv_buf.slice(0, minimum_header_size).toString();
 
-    let t = 0;
-    let i = data_buf.indexOf(chunk_end, t);
-
-    while (-1 != i) {
-        this.parse_chunk(data_buf.slice(t, i));
-        t = i + 2;
-        i = data_buf.indexOf(chunk_end, t);
-    }
-
-    if (t != data_buf.length) {
-        this.prev_buf = data_buf.slice(t);
-    }
-}
-
-parse_chunk(data_buf) {
-    //u.log("parse_chunk");
-    const { packet } = this;
-    // приняли ли хидер
-    if (packet) {
-        this.parse_data(data_buf);
-    } else {
-        this.parse_header(data_buf.toString());
-    }
-}
-
-parse_header(header_str) {
-    //u.log("parse_header");
-    const param_arr = header_str.split(" ");
-    if (param_arr.length > 2) {
-        // парсим время
-        param_arr[0] = parseInt(param_arr[0]);
-        this.receive_header(param_arr);
-    } else {
-        // ошибка разбора хидера
-        throw { code: 100500, error: "bad header" };
-    }
-}
-
-parse_data(data_buf) {
-    const { srv_name, connId, remoteAddress } = this;
-
-    if (data_buf.length) {
-        const { packet } = this;
-        let reuslt_arr = [];
-        let t = 0;
-        let i = data_buf.indexOf(endl, t);
-
-        if (-1 == i) {
-            // в пакете только даныне
-            JSON.parse(data_buf);
-            reuslt_arr.push(data_buf);
-        } else {
-            // в пакете еще и маршруты
-            while (-1 != i) {
-                let line = data_buf.slice(t, i);
-                if (t == 0) {
-                    JSON.parse(line);
-                    reuslt_arr.push(line);
-                } else {
-                    reuslt_arr.push(this.parse_route(line.toString()));
-                }
-
-                t = i + 1;
-                i = data_buf.indexOf(endl, t);
-            }
-
-            // добавляем крайний маршрут
-            if (t != 0) {
-                reuslt_arr.push(this.parse_route(data_buf.slice(t).toString()));
-            }
+        // проверяем что внутри таймстамп
+        if (!((header_str[0] == '[') && 
+            (header_str[minimum_header_size - 1] == ','))) {
+            throw { code: 100500, error: "bad header" };
         }
 
-        if (reuslt_arr.length) {
-            u.log(srv_name, connId, "chunk", reuslt_arr.toString());
-            packet.push_back(reuslt_arr);
+        const time_str = header_str.slice(1, minimum_header_size - 1);
+        const timestamp = parseInt(time_str);
+
+        if (!timestamp || timestamp < 1) {
+            throw { code: 100500, error: "bad header" };
         }
 
-    } else {        
-        // ошибка пакета
-        throw { code: 100500, error: "bad data" };
+        this.create_packet(timestamp);
     }
-}
-
-make_route_kv(json) {
-    //u.log("make_route_kv");
-    let result = "";
-    for (const i in json) {
-        result += ".";
-        result += i;
-        result += "=";
-        result += json[i];
-    }
-    return result;
-}
-
-parse_route(route_str) {
-    if (route_str.charAt(0) == "{") {
-        return this.make_route_kv(JSON.parse(route_str));
-    }
-    return "." + route_str;
 }
 
 // длительность подключения
@@ -240,12 +162,12 @@ time_str() {
     return this.time() / 1000.0 + "sec";
 }
 
-receive_header(param_arr) {
+create_packet(timestamp) {
     //u.log("receive_header", param);
     const { srv_name, connId, ctrl } = this;
     // создаем новый пакет
-    u.log(srv_name, connId, u.js(param_arr));
-    this.packet = ctrl.new_packet(param_arr, connId);
+    u.log(srv_name, connId, timestamp);
+    this.packet = ctrl.new_packet(timestamp, connId);
 }
 
 }

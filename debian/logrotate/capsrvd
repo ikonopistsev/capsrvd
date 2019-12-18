@@ -1,0 +1,10 @@
+/var/log/capsrvd/*.txt {
+    weekly
+    missingok
+    rotate 52
+    compress
+    delaycompress
+    notifempty
+    sharedscripts
+    copytruncate
+}

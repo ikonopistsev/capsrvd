@@ -15,9 +15,9 @@ WantedBy=multi-user.target
 
 # Change [capsrvd].service name if needed
 # create system user
-# adduser -r capsrvd
+# adduser --system capsrvd
 # create working dir /home/capsrvd
-# Save it and copy to /lib/systemd/system/[capsrvd].service
+# Save it and copy to /etc/systemd/system/[capsrvd].service
 # systemctl daemon-reload
 # systemctl enable capsrvd
 # systemctl restart capsrvd
