@@ -9,7 +9,6 @@
   "author": "ikonopistsev",
   "license": "ISC",
   "dependencies": {
-    "amqplib": "^0.5.5",
-    "intel": "^1.2.0"
+    "amqplib": "^0.5.5"
   }
 }
