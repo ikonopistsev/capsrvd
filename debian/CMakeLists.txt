@@ -13,7 +13,7 @@ install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
 install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
 
-set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/postrm)
+set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/postrm;${CMAKE_CURRENT_SOURCE_DIR}/prerm)
 #настройки cpack'a
 set(CPACK_PACKAGE_VENDOR "LLC Bridge-Technology")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "capsrvd server")

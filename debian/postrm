@@ -10,39 +10,15 @@ THAT_APP_NAME=$THAT_NAME
 # user name: capsrvd (change if needed)
 THAT_APP_USER=$THAT_NAME
 
-THAT_APP_RUN=/usr/bin/$THAT_APP_NAME
-# no home
-THAT_APP_HOME=/var/run/$THAT_APP_NAME
-
 THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
 THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
 
 THAT_APP_LOGROTATEDIR=/etc/logrotate.d
 
-# /etc/capsrvd/capsrvd.conf.json.example
-THAT_APP_EXAPLE_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json.example
-
-# /etc/capsrvd/capsrvd.conf.json
-THAT_APP_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json
-
-# /usr/lib/capsrvd/index.js
-THAT_APP_INDEX_SCRIPT=/usr/lib/$THAT_APP_NAME/index.js
-
-# /usr/share/capsrvd/capsrvd
-THAT_APP_LOGROTATE_SCRIPT=/usr/share/$THAT_APP_NAME/$THAT_APP_NAME
-
 # /usr/logrotate.d/capsrvd
 THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
 
-if [ "$1" = remove ]; then
-
-systemctl disable $THAT_NAME
-systemctl stop $THAT_NAME
-
-else if [ "$1" = purge ]; then
-
-systemctl disable $THAT_NAME
-systemctl stop $THAT_NAME
+if [ "$1" = purge ]; then
 
 #remove log dir
 	[ -d $THAT_APP_LOGDIR ] &&
@@ -59,13 +35,13 @@ systemctl stop $THAT_NAME
 # test user exists
 	if id "$THAT_APP_USER" > /dev/null 2>&1; then
 		echo "remove user: $THAT_APP_USER"
-		deluser --remove-all-files
+		deluser --remove-home $THAT_APP_USER
 	fi
 
 else if [ "$1" = upgrade ]; then
 
-systemctl restart $THAT_NAME
+systemctl is-active --quiet $THAT_NAME && systemctl restart $THAT_NAME
 
-fi fi fi
+fi fi
 
 

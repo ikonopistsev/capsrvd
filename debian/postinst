@@ -44,14 +44,14 @@ if [ "$1" = configure ]; then
 
 		adduser --system \
 			--quiet \
-			--home "$CAPSRVD_HOME" \
+			--home "$THAT_APP_HOME" \
 			--no-create-home \
 			--disabled-password \
 			--group "$THAT_APP_USER"
 	fi
 
 	# setup execution on run script
-	[! -x $THAT_APP_RUN ] && \
+	[ ! -x $THAT_APP_RUN ] && \
 		chmod +x $THAT_APP_RUN
 
 	# change log directory permissions
@@ -68,7 +68,7 @@ if [ "$1" = configure ]; then
 		chown -R $THAT_APP_USER $THAT_APP_CONFDIR
 
 	# install logrotate script
-	if [ -d $THAT_APP_LOGROTATEDIR ]; than
+	if [ -d $THAT_APP_LOGROTATEDIR ]; then
 		[ ! -f $THAT_APP_LOGROTATE ] && [ -f $THAT_APP_LOGROTATE_SCRIPT ] && \
 			echo "instal logroate script: $THAT_APP_LOGROTATE" && \
 			cp $THAT_APP_LOGROTATE_SCRIPT $THAT_APP_LOGROTATE
@@ -80,5 +80,5 @@ if [ "$1" = configure ]; then
 	# enable startup
 	systemctl enable $THAT_APP_NAME
 
-	#systemctl restart $CAPSRVD_APP
+	systemctl start $THAT_APP_NAME
 fi
