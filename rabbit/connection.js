@@ -107,7 +107,7 @@ run() {
         })
         .catch(err => {
                 if (err.code) {
-            	    let text = err.code;            	    
+            	    let text = err.code;
             	    if (err.syscall) {
             		text += " " + err.syscall;
             	    }

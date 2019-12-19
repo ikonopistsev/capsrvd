@@ -8,20 +8,12 @@ const app = require("./app.js");
 const version = "capsrvd v2.0.1"
 const confpath = "/etc/capsrvd/capsrvd.conf.json";
 
-const test_log = (path) => {
-    const fd = fs.openSync(path, "a+");
-    if (fd) {
-       fs.closeSync(fd);
-    }
-}
-
 const parse = (args)=> {
     let path = "";
     if (args.length > 0) {
         if ((args.length != 2) || (args[0] != "-c")) {
            throw "no config, use: -c config.json"
         }
-
         path = args[1];
     } else {
         path = confpath;
