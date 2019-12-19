@@ -18,10 +18,10 @@ THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
 THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
 
 THAT_APP_LOGROTATEDIR=/etc/logrotate.d
+THAT_APP_SYSTEMDDIR=/etc/systemd/system
 
 # /etc/capsrvd/capsrvd.conf.json.example
 THAT_APP_EXAPLE_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json.example
-
 # /etc/capsrvd/capsrvd.conf.json
 THAT_APP_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json
 
@@ -30,9 +30,12 @@ THAT_APP_INDEX_SCRIPT=/usr/lib/$THAT_APP_NAME/index.js
 
 # /usr/share/capsrvd/capsrvd
 THAT_APP_LOGROTATE_SCRIPT=/usr/share/$THAT_APP_NAME/$THAT_APP_NAME
-
 # /usr/logrotate.d/capsrvd
 THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
+# /usr/share/capsrvd/capsrvd
+THAT_APP_SYSTEMD_SCRIPT=/usr/share/$THAT_APP_NAME/$THAT_APP_NAME.service
+# /usr/logrotate.d/capsrvd
+THAT_APP_SYSTEMD=$THAT_APP_SYSTEMDDIR/$THAT_APP_NAME.service
 
 # test user exists
 if id "$THAT_APP_USER" > /dev/null 2>&1; then
@@ -67,10 +70,12 @@ if [ -d $THAT_APP_LOGROTATEDIR ]; then
 		cp $THAT_APP_LOGROTATE_SCRIPT $THAT_APP_LOGROTATE
 fi
 
-# update systemd configuration
-systemctl daemon-reload
+# install systemd script
+if [ -d $THAT_APP_SYSTEMDDIR ]; then
+	[ -f $THAT_APP_SYSTEMD_SCRIPT ] && [ ! -f $THAT_APP_SYSTEMD ] && \
+		cp $THAT_APP_SYSTEMD_SCRIPT $THAT_APP_SYSTEMD && \
+		systemctl daemon-reload && \
+		systemctl enable $THAT_APP_NAME && \
+		systemctl restart $THAT_APP_NAME
+fi
 
-# enable startup
-systemctl enable $THAT_APP_NAME
-
-systemctl start $THAT_APP_NAME

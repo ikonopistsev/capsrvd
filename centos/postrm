@@ -10,23 +10,44 @@ THAT_APP_NAME=$THAT_NAME
 # user name: capsrvd (change if needed)
 THAT_APP_USER=$THAT_NAME
 
+# /usr/bin/$THAT_APP_NAME
+THAT_APP_RUN=/usr/bin/$THAT_APP_NAME
+
 THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
 THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
 
 THAT_APP_LOGROTATEDIR=/etc/logrotate.d
+THAT_APP_SYSTEMDDIR=/etc/systemd/system
 
 # /usr/logrotate.d/capsrvd
 THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
+# /usr/logrotate.d/capsrvd
+THAT_APP_SYSTEMD=$THAT_APP_SYSTEMDDIR/$THAT_APP_NAME.service
 
-#remove logrotate config
-[ -f $THAT_APP_LOGROTATE ] && \
-	rm $THAT_APP_LOGROTATE
+# test full uninstall
+if [ ! -f $THAT_APP_RUN ]; then
+        #remove logrotate config
+	[ -f $THAT_APP_LOGROTATE ] && \
+		rm $THAT_APP_LOGROTATE
+	
+	if [ -f $THAT_APP_SYSTEMD ]; then
+		systemctl is-enabled --quiet $THAT_APP_NAME && \
+			systemctl disable $THAT_APP_NAME
 
-# test user exists
-if id "$THAT_APP_USER" > /dev/null 2>&1; then
-	echo "remove user: $THAT_APP_USER"
-	userdel -f $THAT_APP_USER
+		systemctl is-active --quiet $THAT_APP_NAME && \
+			systemctl stop $THAT_APP_NAME
+			
+		rm $THAT_APP_SYSTEMD
+
+		systemctl daemon-reload
+	fi
+	
+	# test user exists
+	# do not will be remove user at all :(
+	#if id "$THAT_APP_USER" > /dev/null 2>&1; then
+	#	echo "remove user: $THAT_APP_USER"
+	#	userdel -f $THAT_APP_USER
+	#fi
 fi
-
 
 

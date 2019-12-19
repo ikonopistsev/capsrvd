@@ -16,10 +16,9 @@ install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
 install(FILES index.js DESTINATION /usr/lib/capsrvd)
 install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
-install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
+install(FILES ../systemd/capsrvd.service DESTINATION /usr/share/capsrvd)
 
 SET(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postinst")
-SET(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/prerm")
 SET(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postrm")
 
 #настройки cpack'a
