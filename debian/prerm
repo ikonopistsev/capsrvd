@@ -5,11 +5,13 @@ set -e
 THAT_NAME=capsrvd
 
 if [ "$1" = remove ]; then
+	systemctl is-enabled --quiet $THAT_NAME &&
+		systemctl disable $THAT_NAME
 
-systemctl is-active --quiet $THAT_NAME && \
-    systemctl disable $THAT_NAME && \
-    systemctl stop $THAT_NAME
+	systemctl is-active --quiet $THAT_NAME && \
+		systemctl stop $THAT_NAME
 
+	systemctl daemon-reload
 fi
 
 

@@ -80,5 +80,5 @@ if [ "$1" = configure ]; then
 	# enable startup
 	systemctl enable $THAT_APP_NAME
 
-	systemctl start $THAT_APP_NAME
+	systemctl restart $THAT_APP_NAME
 fi

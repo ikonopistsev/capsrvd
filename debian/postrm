@@ -19,7 +19,6 @@ THAT_APP_LOGROTATEDIR=/etc/logrotate.d
 THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
 
 if [ "$1" = purge ]; then
-
 #remove log dir
 	[ -d $THAT_APP_LOGDIR ] &&
 		rm -rf $THAT_APP_LOGDIR
@@ -37,11 +36,6 @@ if [ "$1" = purge ]; then
 		echo "remove user: $THAT_APP_USER"
 		deluser --remove-home $THAT_APP_USER
 	fi
-
-else if [ "$1" = upgrade ]; then
-
-systemctl is-active --quiet $THAT_NAME && systemctl restart $THAT_NAME
-
-fi fi
+fi
 
 
