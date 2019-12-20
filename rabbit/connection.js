@@ -171,12 +171,14 @@ publish(packet) {
                 method: method,
                 payload: packet_arr[0]
             };
+
+            const text_message = u.js(message);
             const route = (packet_arr.length > 1) ? packet_arr[1].toString() : null;
 
             u.log("publish", connId, "me=" + method, 
-                "ex=" + exchange, "ro=" + route, u.js(message), u.js(option));
+                "ex=" + exchange, "ro=" + route, text_message, u.js(option));
 
-            channel.publish(exchange, route, Buffer.from(message.toString()), option);
+            channel.publish(exchange, route, Buffer.from(text_message), option);
         }
         return true;
     } else {
