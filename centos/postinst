@@ -72,10 +72,18 @@ fi
 
 # install systemd script
 if [ -d $THAT_APP_SYSTEMDDIR ]; then
-	[ -f $THAT_APP_SYSTEMD_SCRIPT ] && [ ! -f $THAT_APP_SYSTEMD ] && \
-		cp $THAT_APP_SYSTEMD_SCRIPT $THAT_APP_SYSTEMD && \
-		systemctl daemon-reload && \
-		systemctl enable $THAT_APP_NAME && \
-		systemctl restart $THAT_APP_NAME
+	if [ -f $THAT_APP_SYSTEMD_SCRIPT ]; then
+		if [ ! -f $THAT_APP_SYSTEMD ]; then
+			cp $THAT_APP_SYSTEMD_SCRIPT $THAT_APP_SYSTEMD
+
+			systemctl daemon-reload
+
+			systemctl enable $THAT_APP_NAME
+
+			systemctl is-active --quiet $THAT_APP_NAME && \
+				systemctl restart $THAT_APP_NAME
+		fi
+	fi
 fi
 
+exit 0
