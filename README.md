@@ -1,5 +1,5 @@
 # capsrvd
-capsrvd for rabbitmq
+capsrvd is a server receiving messages from captor (mysql udf module)
 
 Proxy Service that receives data from mysql plugin Captor and send them to RabbitMQ.
 
