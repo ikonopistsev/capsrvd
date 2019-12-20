@@ -3,9 +3,6 @@ const u = require("../unit");
 
 const delay_step = 1000;
 const max_delay = 10000;
-const packet_end = Buffer.from("}");
-const packet_method = Buffer.from("{\"method\":\"");
-const packet_payload = Buffer.from("\",\"payload\":");
 
 module.exports = class connection {
 

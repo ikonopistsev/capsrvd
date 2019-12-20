@@ -13,7 +13,7 @@ set(CUSTOM_BUILD_VERSION ${FILE_REV})
 
 install(FILES ../capsrvd DESTINATION bin)
 install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
-install(FILES index.js DESTINATION /usr/lib/capsrvd)
+install(FILES ../gentoo/index.js DESTINATION /usr/lib/capsrvd)
 install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
 install(FILES ../systemd/capsrvd.service DESTINATION /usr/share/capsrvd)
