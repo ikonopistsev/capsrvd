@@ -50,4 +50,4 @@ if [ ! -f $THAT_APP_RUN ]; then
 	#fi
 fi
 
-
+exit 0
