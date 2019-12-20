@@ -2,6 +2,7 @@
 class unit {
     constructor() {
         this.localtime = false;
+        this.verbose = true;
     }
 
     // utc time
@@ -46,21 +47,19 @@ class unit {
         stream(this.ts(), format, ...args);
     }
 
-    log(...args) {
-        if (console.log) {
-            this.output(console.log, "     ", ...args);
-        }
-    }
-
-    info(...args) {
-        if (console.info) {
-            this.output(console.info, "(INF)", ...args);
-        }
-    }
-
     error(...args) {
-        if (console.error) {
-            this.output(console.error, "(ERR)", ...args);
+        this.output(console.error, "(ERR)", ...args);
+    }
+
+    log(...args) {
+        this.output(console.log, "     ", ...args);
+    }
+
+    trace(callback) {
+        if (this.verbose) {
+            callback((...args) => {
+                this.log(...args);
+            });
         }
     }
 

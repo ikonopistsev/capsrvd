@@ -74,7 +74,7 @@ run() {
                 }, delay);
             });
 
-            u.info("connect", conn_name, "ok");
+            u.log("connect", conn_name, "ok");
             conn.createChannel()
                 .then(ch => {
                     // в документации есть
@@ -90,7 +90,7 @@ run() {
                         conn.close();
                     });
 
-                    u.info(conn_name, "ch", "ok");
+                    u.log(conn_name, "ch", "ok");
 
                     // сохраняем канал для отправки
                     this.channel = ch;
@@ -172,8 +172,10 @@ publish(packet) {
             const text_message = u.js(message);
             const route = (packet_arr.length > 1) ? packet_arr[1].toString() : null;
 
-            u.log("publish", connId, "me=" + method, 
-                "ex=" + exchange, "ro=" + route, text_message, u.js(option));
+            u.trace(output => {
+                output("publish", connId, "me=" + method, 
+                    "ex=" + exchange, "ro=" + route, text_message, u.js(option)) 
+            });
 
             channel.publish(exchange, route, Buffer.from(text_message), option);
         }

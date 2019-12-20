@@ -13,7 +13,7 @@ constructor(ctrl, srv_name, sock, ci) {
     this.packet = null;
     // буффер данных, сохраняем в него
     // то что не пропарсилось
-    this.recv_buf = null;
+    this.recv_buf = Buffer.alloc(0);
     // сохраняем сокет
     this.sock = sock;
     // время подключения
@@ -24,8 +24,8 @@ constructor(ctrl, srv_name, sock, ci) {
     this.ctrl = ctrl;
     // сохраняем id коннекта
     this.ci = ci;
-    // сохраняем время начала приему
-    this.timestamp = new Date();
+    // сохраняем время начала приема
+    this.recv_time = null;
 
     sock.on("data", (chunk_buf) => {
         this.on_data(chunk_buf);
@@ -46,11 +46,17 @@ constructor(ctrl, srv_name, sock, ci) {
         this.on_error({code: "ETIMEOUT"});
     });
 
-    u.log(srv_name, this.connId, "connect", this.remoteAddress);
+    u.trace(output => {
+        output(srv_name, this.connId, "connect", this.remoteAddress);
+    });
 }
 
 on_data(chunk_buf) {
     try {
+        const { recv_time } = this;
+        if (!recv_time) {
+            this.recv_time = new Date();
+        }
         this.concat(chunk_buf);
         this.parse();
     } catch (e) {
@@ -60,11 +66,11 @@ on_data(chunk_buf) {
 
 on_error(err) {
     const { srv_name, connId, remoteAddress, sock, packet, 
-        ctrl, timestamp, recv_buf } = this;
+        ctrl, recv_time, recv_buf } = this;
     const { length } = recv_buf;
 
     u.error(srv_name, connId, remoteAddress, "receive=" + length, 
-        "time=" + u.time_diff(timestamp), err, this.time_str());
+        "time=" + u.time_diff(recv_time), err, this.time_str());
 
     sock.destroy();
 
@@ -78,7 +84,7 @@ on_error(err) {
 
 on_close() {
     const { sock, ctrl, packet, connId, remoteAddress, 
-        srv_name, recv_buf, timestamp } = this;
+        srv_name, recv_buf, recv_time } = this;
     const { length } = recv_buf;
     
     try {
@@ -89,8 +95,10 @@ on_close() {
             ctrl.receive();
         }
 
-        u.log(srv_name, connId, "close", remoteAddress,
-            "receive=" + length, "time=" + u.time_diff(timestamp) );
+        u.trace(output => {
+            output(srv_name, connId, "close", remoteAddress,
+                "receive=" + length, "time=" + u.time_diff(recv_time));
+        });
     
         sock.destroy();
     } catch (err) {
@@ -163,10 +171,11 @@ time_str() {
 }
 
 create_packet(timestamp) {
-    //u.log("receive_header", param);
     const { srv_name, connId, ctrl } = this;
     // создаем новый пакет
-    u.log(srv_name, connId, timestamp);
+    u.trace(output => {
+        output(srv_name, connId, timestamp);
+    });
     this.packet = ctrl.new_packet(timestamp, connId);
 }
 

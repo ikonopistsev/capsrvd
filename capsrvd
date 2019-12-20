@@ -17,6 +17,10 @@ do
     shift
 done
 
-LOGFILE=`jq -r .LogFile $CONF`
+LOGFILE=`jq -r .log $CONF`
 
-exec node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1
+if [ "$LOGFILE" = "null" ]; then
+    exec node /usr/lib/capsrvd/index.js -c $CONF >> /dev/null 2>&1
+else
+    exec node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1
+fi

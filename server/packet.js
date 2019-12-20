@@ -17,7 +17,6 @@ constructor(timestamp, connId) {
 }
 
 receive(data_buf) {
-
     const data = JSON.parse(data_buf);
     if (data.length < 4) {
         throw { code: 100500, error: "bad packet" };
@@ -30,7 +29,10 @@ receive(data_buf) {
     const { length } = data_arr;
     const { timestamp, method, exchange, connId } = this;
 
-    u.log(connId, "size=" + length, u.js(data));
+    u.trace(output => {
+        output(connId, "size=" + length, u.js(data));
+    });
+
     this.ready = true;
 }
 

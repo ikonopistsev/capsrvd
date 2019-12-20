@@ -23,6 +23,6 @@
     }
   },
 
-  "LogFile":"/var/log/capsrvd/capsrvd.txt",
-  "Develop":true
+  "log": "/var/log/capsrvd/capsrvd.txt",
+  "verbose": true
 }

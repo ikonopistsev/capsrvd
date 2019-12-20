@@ -18,10 +18,13 @@ const parse = (args)=> {
         path = confpath;
     }
 
-    return JSON.parse(fs.readFileSync(path, "utf8"));
+    const conf = JSON.parse(fs.readFileSync(path, "utf8"));
+    u.verbose = conf.verbose;
+    return conf;
 }
 
 try {
+    u.localtime = true;
     const args = process.argv.slice(2);
     const theapp = new app(parse(args));
 
