@@ -5,7 +5,9 @@
 const fs = require("fs");
 const u = require("./unit");
 const app = require("./app.js");
+const pkg = require("./package.json");
 const confpath = "/etc/capsrvd/capsrvd.conf.json";
+
 
 const parse = (args)=> {
     let path = "";
@@ -25,6 +27,8 @@ const parse = (args)=> {
 
 try {
     u.localtime = true;
+    u.log(pkg.name + "-" + pkg.version + "-r" + pkg.revision);
+
     const args = process.argv.slice(2);
     const theapp = new app(parse(args));
 
