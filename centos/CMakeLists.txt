@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-file(READ "../version.txt" FILE_VER)
+execute_process(COMMAND jq -r .version ../../package.json OUTPUT_VARIABLE FILE_VER)
+string(STRIP ${FILE_VER} FILE_VER)
 file(READ "../revision.txt" FILE_REV)
 
 project(capsrvd VERSION ${FILE_VER})
