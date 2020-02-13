@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-# менять верисю пакета тут
 project(capsrvd VERSION "1.0.0")
 
 execute_process(COMMAND jq -r .version ../../package.json OUTPUT_VARIABLE FILE_VER)
@@ -12,10 +11,10 @@ string(STRIP ${FILE_REV} FILE_REV)
 
 install(FILES ../capsrvd DESTINATION bin)
 install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
-install(FILES ../gentoo/index.js DESTINATION /usr/lib/capsrvd)
-install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
+install(FILES ../bootstrap/index.js DESTINATION /usr/lib/capsrvd)
+install(FILES ../logrotate/capsrvd.logrotate DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
-install(FILES ../systemd/capsrvd.service DESTINATION /etc/systemd/system)
+install(FILES ../systemd/capsrvd.service DESTINATION /usr/share/capsrvd)
 
 set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/postrm;${CMAKE_CURRENT_SOURCE_DIR}/prerm)
 #настройки cpack'a

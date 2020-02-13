@@ -5,8 +5,10 @@
 const fs = require("fs");
 const u = require("./unit");
 const app = require("./app.js");
+const pkg = require("./package.json");
 const confpath = "/etc/capsrvd/capsrvd.conf.json";
 const pkg = require("./package.json");
+
 
 const parse = (args)=> {
     let path = "";

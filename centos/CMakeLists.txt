@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(capsrvd VERSION "1.0.0")
 
-execute_process(COMMAND jq -r .version ../../package.json OUTPUT_VARIABLE FILE_VER)
-string(STRIP ${FILE_VER} FILE_VER)
-
 execute_process(COMMAND jq -r .revision ../../package.json OUTPUT_VARIABLE FILE_REV)
 string(STRIP ${FILE_REV} FILE_REV)
 
