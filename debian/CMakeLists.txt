@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-file(READ "../version.txt" FILE_VER)
-file(READ "../revision.txt" FILE_REV)
-
 # менять верисю пакета тут
-project(capsrvd VERSION ${FILE_VER})
+project(capsrvd VERSION "1.0.0")
+
+execute_process(COMMAND jq -r .version ../../package.json OUTPUT_VARIABLE FILE_VER)
+string(STRIP ${FILE_VER} FILE_VER)
+
+execute_process(COMMAND jq -r .revision ../../package.json OUTPUT_VARIABLE FILE_REV)
+string(STRIP ${FILE_REV} FILE_REV)
+
 
 install(FILES ../capsrvd DESTINATION bin)
 install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
@@ -24,7 +28,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "ikonopistsev")
 set(CPACK_DEBIAN_PACKAGE_SECTION main)
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_DEBIAN_PACKAGE_RELEASE ${FILE_REV})
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION}-${FILE_REV})
+set(CPACK_PACKAGE_VERSION ${FILE_VER}-${FILE_REV})
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "nodejs (>=12.0.0),jq,bash,systemd,logrotate,util-linux,coreutils")
 
 IF(NOT CPACK_DEBIAN_PACKAGE_ARCHITECTURE)

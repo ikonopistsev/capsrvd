@@ -2,6 +2,8 @@
 
 set -e
 
+THAT_NAME=capsrvd
+
 CONF=/etc/capsrvd/capsrvd.conf.json
 
 set -- $(getopt -u -o p:c: -l pid:,config: -- "$@")
@@ -19,8 +21,16 @@ done
 
 LOGFILE=`jq -r .log $CONF`
 
-if [ "$LOGFILE" = "null" ]; then
-    exec node /usr/lib/capsrvd/index.js -c $CONF >> /dev/null 2>&1
+if [ -z "$PIDFILE" ]; then
+    if [ "$LOGFILE" = "null" ]; then
+        exec node /usr/lib/$THAT_NAME/index.js -c $CONF >> /dev/null 2>&1
+    else
+        exec node /usr/lib/$THAT_NAME/index.js -c $CONF >> $LOGFILE 2>&1
+    fi
 else
-    exec node /usr/lib/capsrvd/index.js -c $CONF >> $LOGFILE 2>&1
+    if [ "$LOGFILE" = "null" ]; then
+        echo "$BASHPID" > "$PIDFILE" && exec node /usr/lib/$THAT_NAME/index.js -c $CONF >> /dev/null 2>&1 &
+    else
+        echo "$BASHPID" > "$PIDFILE" && exec node /usr/lib/$THAT_NAME/index.js -c $CONF >> $LOGFILE 2>&1 &
+    fi
 fi
