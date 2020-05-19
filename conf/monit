@@ -1,0 +1,27 @@
+check directory capsrvd_conf with path /etc/capsrvd
+    if does not exist then alert
+    if failed uid "capsrvd" then alert
+    if failed permission 0750 then alert
+    group captor
+
+check directory capsrvd_run with path /var/run/capsrvd
+    if does not exist then exec "/bin/mkdir -p /var/run/capsrvd"
+    if failed uid "capsrvd" then exec "/bin/chown -R capsrvd:root /var/run/capsrvd"
+    depend on capsrvd_conf
+    group captor
+
+check directory capsrvd_log with path /var/log/capsrvd
+    if does not exist then exec "/bin/mkdir -p /var/log/capsrvd"
+    if failed uid "capsrvd" then exec "/bin/chown -R capsrvd:root /var/log/capsrvd"
+    depend on capsrvd_conf
+    group captor
+
+check process capsrvd with pidfile /var/run/capsrvd/capsrvd.pid
+    start program = "/usr/bin/capsrvd -c /etc/capsrvd/capsrvd.conf.json -p /var/run/capsrvd/capsrvd.pid"
+	as uid capsrvd and gid capsrvd
+    stop program = "/usr/bin/pkill -F /var/run/capsrvd/capsrvd.pid"
+    if 5 restarts within 20 cycles then timeout
+    depend on capsrvd_conf
+    depend on capsrvd_run
+    depend on capsrvd_log
+    group captor

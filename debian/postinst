@@ -2,83 +2,98 @@
 
 set -e
 
-THAT_NAME=capsrvd
-
-# app name : capsrvd
-THAT_APP_NAME=$THAT_NAME
-
+TARGET_NAME=capsrvd
 # user name: capsrvd (change if needed)
-THAT_APP_USER=$THAT_NAME
+TARGET_USER=$TARGET_NAME
+TARGET_GID=172
+TARGET_UID=172
 
-THAT_APP_RUN=/usr/bin/$THAT_APP_NAME
-# no home
-THAT_APP_HOME=/var/run/$THAT_APP_NAME
+TARGET_RUN=/usr/bin/$TARGET_NAME
+TARGET_HOME=/usr/lib/$TARGET_NAME
+TARGET_LOGDIR=/var/log/$TARGET_NAME
 
-THAT_APP_LOGDIR=/var/log/$THAT_APP_NAME
-THAT_APP_CONFDIR=/etc/$THAT_APP_NAME
-
-THAT_APP_LOGROTATEDIR=/etc/logrotate.d
-
-# /etc/capsrvd/capsrvd.conf.json.example
-THAT_APP_EXAPLE_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json.example
-
+TARGET_CONFDIR=/etc/$TARGET_NAME
 # /etc/capsrvd/capsrvd.conf.json
-THAT_APP_CONF=$THAT_APP_CONFDIR/$THAT_APP_NAME.conf.json
+TARGET_CONF=$TARGET_CONFDIR/$TARGET_NAME.conf.json
+# /etc/capsrvd/capsrvd.conf.json.example
+TARGET_EXAMPLE_CONF=$TARGET_CONFDIR/$TARGET_NAME.conf.json.example
 
 # /usr/lib/capsrvd/index.js
-THAT_APP_INDEX_SCRIPT=/usr/lib/$THAT_APP_NAME/index.js
+TARGET_INDEX=/usr/lib/$TARGET_NAME/index.js
 
-# /usr/share/capsrvd/capsrvd
-THAT_APP_LOGROTATE_SCRIPT=/usr/share/$THAT_APP_NAME/$THAT_APP_NAME
+#
+TARGET_DATADIR=/usr/share/$TARGET_NAME
 
-# /usr/logrotate.d/capsrvd
-THAT_APP_LOGROTATE=$THAT_APP_LOGROTATEDIR/$THAT_APP_NAME
+# logrotate section
+LOGROTATEDIR=/etc/logrotate.d
+LOGROTATE=$THAT_APP_LOGROTATEDIR/$TARGET_NAME
+LOGROTATE_SCRIPT=$TARGET_DATADIR/logrotate
 
+# systemd section
+SYSTEMDDIR=/etc/systemd/system
+SYSTEMD=$SYSTEMDDIR/$TARGET_NAME.service
+SYSTEMD_SCRIPT=$TARGET_DATADIR/systemd
+
+# monit section
+MONITDIR=/etc/monit/conf.d
+MONIT=$MONITDIR/$TARGET_NAME.conf
+MONIT_SCRIPT=$TARGET_DATADIR/monit
+SYSTEMD_MONIT_SCRIPT=$TARGET_DATADIR/monit.systemd
+
+# postinst
 if [ "$1" = configure ]; then
 
-	# test user exists
-	if id "$THAT_APP_USER" > /dev/null 2>&1; then
-		echo "user $THAT_APP_USER exists"
-	else
-		echo "add user: $THAT_APP_USER"
-
-		adduser --system \
-			--quiet \
-			--home "$THAT_APP_HOME" \
-			--no-create-home \
-			--disabled-password \
-			--group "$THAT_APP_USER"
-	fi
-
-	# setup execution on run script
-	[ ! -x $THAT_APP_RUN ] && \
-		chmod +x $THAT_APP_RUN
-
-	# change log directory permissions
-	[ -d $THAT_APP_LOGDIR ] && \
-		chown -R $THAT_APP_USER $THAT_APP_LOGDIR
-
-	# move /etc/capsrvd/capsrvd.conf.json.example to /etc/capsrvd/capsrvd.conf.json if its first installation
-	[ ! -f $THAT_APP_CONF ] && [ -f $THAT_APP_EXAPLE_CONF ] && \
-		mv $THAT_APP_EXAPLE_CONF $THAT_APP_CONF
-
-	# setup config directory permissions
-	[ -d $THAT_APP_CONFDIR ] && \
-		chmod 750 $THAT_APP_CONFDIR && \
-		chown -R $THAT_APP_USER $THAT_APP_CONFDIR
-
-	# install logrotate script
-	if [ -d $THAT_APP_LOGROTATEDIR ]; then
-		[ ! -f $THAT_APP_LOGROTATE ] && [ -f $THAT_APP_LOGROTATE_SCRIPT ] && \
-			echo "instal logroate script: $THAT_APP_LOGROTATE" && \
-			cp $THAT_APP_LOGROTATE_SCRIPT $THAT_APP_LOGROTATE
-	fi
-
-	# update systemd configuration
-	systemctl daemon-reload
-
-	# enable startup
-	systemctl enable $THAT_APP_NAME
-
-	systemctl restart $THAT_APP_NAME
+# test user exists
+if id "$TARGET_USER" > /dev/null 2>&1; then
+    echo "user $TARGET_USER exists"
+else
+    echo "add group: $TARGET_USER gid: $TARGET_GID"
+    groupadd --system --gid $TARGET_GID $TARGET_NAME
+    useradd --system --no-create-home --gid $TARGET_GID --uid $TARGET_UID --disabled-password $TARGET_NAME
 fi
+
+# setup execution on run script
+[ ! -x $TARGET_RUN ] && \
+    chmod +x $TARGET_RUN
+
+# change log directory permissions
+[ -d $TARGET_LOGDIR ] && \
+    chown -R $TARGET_USER $TARGET_LOGDIR
+
+# move /etc/capsrvd/capsrvd.conf.json.example to /etc/capsrvd/capsrvd.conf.json if its first installation
+[ ! -f $TARGET_CONF ] && [ -f $TARGET_EXAMPLE_CONF ] && \
+    mv $TARGET_EXAMPLE_CONF $TARGET_CONF
+
+# setup config directory permissions
+[ -d $TARGET_CONFDIR ] && \
+    chmod 750 $TARGET_CONFDIR && \
+    chown -R $TARGET_USER $TARGET_CONFDIR
+
+# install logrotate script
+if [ -d $LOGROTATEDIR ]; then
+    [ ! -f $LOGROTATE ] && [ -f $LOGROTATE_SCRIPT ] && \
+	echo "instal logroate script: $LOGROTATE" && \
+	cp $LOGROTATE_SCRIPT $LOGROTATE
+fi
+
+if [ -d $SYSTEMDDIR ]; then
+    [ ! -f $SYSTEMD ] && [ -f $SYSTEMD_SCRIPT ] && \
+	echo "install systemd script: $SYSTEMD" && \
+	cp $SYSTEMD_SCRIPT $SYSTEMD
+fi
+
+if [ -d $MONITDIR ]; then
+    if [ -f $SYSTEMD ]; then
+	[ ! -f $MONIT ] && [ -f $SYSTEMD_MONIT_SCRIPT ] && \
+	echo "instal monit systemd script: $SYSTEMD_MONIT_SCRIPT" && \
+	cp $SYSTEMD_MONIT_SCRIPT $MONIT
+    else
+	[ ! -f $MONIT ] && [ -f $MONIT_SCRIPT ] && \
+	echo "instal monit script: $MONIT_SCRIPT" && \
+	cp $MONIT_SCRIPT $MONIT
+    fi
+fi
+
+fi
+
+exit 0

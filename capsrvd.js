@@ -7,8 +7,6 @@ const u = require("./unit");
 const app = require("./app.js");
 const pkg = require("./package.json");
 const confpath = "/etc/capsrvd/capsrvd.conf.json";
-const pkg = require("./package.json");
-
 
 const parse = (args)=> {
     let path = "";
@@ -22,7 +20,6 @@ const parse = (args)=> {
     }
 
     const conf = JSON.parse(fs.readFileSync(path, "utf8"));
-    u.verbose = conf.verbose;
     return conf;
 }
 
@@ -31,13 +28,15 @@ try {
     u.log(pkg.name + "-" + pkg.version + "-r" + pkg.revision);
 
     const args = process.argv.slice(2);
-    const theapp = new app(parse(args));
+    const conf = parse(args);
+    u.verbose = conf.verbose;
+
+    const theapp = new app(conf);
+    theapp.run();
 
     process.on("uncaughtException", err => {
         u.error("uex", err);
     }); 
-
-    theapp.run();
 } catch (e) {
     u.error(e);
 }

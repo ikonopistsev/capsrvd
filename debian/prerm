@@ -2,16 +2,60 @@
 
 set -e
 
-THAT_NAME=capsrvd
+TARGET_NAME=capsrvd
+# user name: capsrvd (change if needed)
+TARGET_USER=$TARGET_NAME
+TARGET_GID=172
+TARGET_UID=172
 
+TARGET_RUN=/usr/bin/$TARGET_NAME
+TARGET_HOME=/usr/lib/$TARGET_NAME
+TARGET_LOGDIR=/var/log/$TARGET_NAME
+
+TARGET_CONFDIR=/etc/$TARGET_NAME
+# /etc/capsrvd/capsrvd.conf.json
+TARGET_CONF=$TARGET_CONFDIR/$TARGET_NAME.conf.json
+# /etc/capsrvd/capsrvd.conf.json.example
+TARGET_EXAMPLE_CONF=$TARGET_CONFDIR/$TARGET_NAME.conf.json.example
+
+# /usr/lib/capsrvd/index.js
+TARGET_INDEX=/usr/lib/$TARGET_NAME/index.js
+
+#
+TARGET_DATADIR=/usr/share/$TARGET_NAME
+
+# logrotate section
+LOGROTATEDIR=/etc/logrotate.d
+LOGROTATE=$THAT_APP_LOGROTATEDIR/$TARGET_NAME
+LOGROTATE_SCRIPT=$TARGET_DATADIR/logrotate
+
+# systemd section
+SYSTEMDDIR=/etc/systemd/system
+SYSTEMD=$SYSTEMDDIR/$TARGET_NAME.service
+SYSTEMD_SCRIPT=$TARGET_DATADIR/systemd
+SYSTEMD_RUNDIR=/run/systemd/system
+
+# monit section
+MONITDIR=/etc/monit/conf.d
+MONIT=$MONITDIR/$TARGET_NAME.conf
+MONIT_SCRIPT=$TARGET_DATADIR/monit
+SYSTEMD_MONIT_SCRIPT=$TARGET_DATADIR/monit.systemd
+
+# postinst
 if [ "$1" = remove ]; then
-	systemctl is-enabled --quiet $THAT_NAME &&
-		systemctl disable $THAT_NAME
 
-	systemctl is-active --quiet $THAT_NAME && \
-		systemctl stop $THAT_NAME
+if [ ! -d $MONIT ]; then
+    if [ -d $SYSTEMD_RUNDIR ]; then
+	systemctl is-enabled --quiet $TARGET_NAME &&
+	    systemctl disable $TARGET_NAME
+
+	systemctl is-active --quiet $TARGET_NAME && \
+	    systemctl stop $TARGET_NAME
 
 	systemctl daemon-reload
+    fi
 fi
 
+fi
 
+exit 0
