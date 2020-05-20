@@ -33,12 +33,12 @@ LOGROTATE_SCRIPT=$TARGET_DATADIR/logrotate
 SYSTEMDDIR=/etc/systemd/system
 SYSTEMD=$SYSTEMDDIR/$TARGET_NAME.service
 SYSTEMD_SCRIPT=$TARGET_DATADIR/systemd
+SYSTEMD_RUNDIR=/run/systemd/system
 
 # monit section
 MONITDIR=/etc/monit/conf.d
 MONIT=$MONITDIR/$TARGET_NAME.conf
 MONIT_SCRIPT=$TARGET_DATADIR/monit
-SYSTEMD_MONIT_SCRIPT=$TARGET_DATADIR/monit.systemd
 
 # postinst
 if [ "$1" = configure ]; then
@@ -76,24 +76,18 @@ if [ -d $LOGROTATEDIR ]; then
 	cp $LOGROTATE_SCRIPT $LOGROTATE
 fi
 
-if [ -d $SYSTEMDDIR ]; then
-    [ ! -f $SYSTEMD ] && [ -f $SYSTEMD_SCRIPT ] && \
-	echo "install systemd script: $SYSTEMD" && \
-	cp $SYSTEMD_SCRIPT $SYSTEMD
-fi
-
 if [ -d $MONITDIR ]; then
-    if [ -f $SYSTEMD ]; then
-	[ ! -f $MONIT ] && [ -f $SYSTEMD_MONIT_SCRIPT ] && \
-	echo "instal monit systemd script: $SYSTEMD_MONIT_SCRIPT" && \
-	cp $SYSTEMD_MONIT_SCRIPT $MONIT
-    else
-	[ ! -f $MONIT ] && [ -f $MONIT_SCRIPT ] && \
+    [ ! -f $MONIT ] && [ -f $MONIT_SCRIPT ] && \
 	echo "instal monit script: $MONIT_SCRIPT" && \
 	cp $MONIT_SCRIPT $MONIT
+else
+     if [ -d $SYSTEMD_RUNDIR ]; then
+	[ -d $SYSTEMDDIR ] && [ ! -f $SYSTEMD ] && [ -f $SYSTEMD_SCRIPT ] && \
+	    echo "install systemd script: $SYSTEMD" && \
+	    cp $SYSTEMD_SCRIPT $SYSTEMD
     fi
 fi
 
-fi
+fi # configure
 
 exit 0

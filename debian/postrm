@@ -67,7 +67,7 @@ if [ "$1" = purge ]; then
 if id "$TARGET_USER" > /dev/null 2>&1; then
     echo "remove user: $TARGET_USER"
     userdel $TARGET_USER
-    groupdel $TARGET_USER
+#    groupdel $TARGET_USER
 fi
 
 fi
