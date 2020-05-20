@@ -49,7 +49,7 @@ if id "$TARGET_USER" > /dev/null 2>&1; then
 else
     echo "add group: $TARGET_USER gid: $TARGET_GID"
     groupadd --system --gid $TARGET_GID $TARGET_NAME
-    useradd --system --no-create-home --gid $TARGET_GID --uid $TARGET_UID --disabled-password $TARGET_NAME
+    useradd --system --no-create-home --gid $TARGET_GID --uid $TARGET_UID $TARGET_NAME
 fi
 
 # setup execution on run script
