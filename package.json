@@ -1,7 +1,7 @@
 {
   "name": "capsrvd",
   "version": "2.0.6",
-  "revision": 3,
+  "revision": 4,
   "description": "",
   "main": "capsrvd.js",
   "scripts": {

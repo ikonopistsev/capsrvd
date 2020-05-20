@@ -26,7 +26,7 @@ TARGET_DATADIR=/usr/share/$TARGET_NAME
 
 # logrotate section
 LOGROTATEDIR=/etc/logrotate.d
-LOGROTATE=$THAT_APP_LOGROTATEDIR/$TARGET_NAME
+LOGROTATE=$LOGROTATEDIR/$TARGET_NAME
 LOGROTATE_SCRIPT=$TARGET_DATADIR/logrotate
 
 # systemd section
@@ -72,13 +72,13 @@ fi
 # install logrotate script
 if [ -d $LOGROTATEDIR ]; then
     [ ! -f $LOGROTATE ] && [ -f $LOGROTATE_SCRIPT ] && \
-	echo "instal logroate script: $LOGROTATE" && \
+	echo "instal logroate script: $LOGROTATE_SCRIPT -> $LOGROTATE" && \
 	cp $LOGROTATE_SCRIPT $LOGROTATE
 fi
 
 if [ -d $MONITDIR ]; then
     [ ! -f $MONIT ] && [ -f $MONIT_SCRIPT ] && \
-	echo "instal monit script: $MONIT_SCRIPT" && \
+	echo "instal monit script: $MONIT_SCRIPT -> $MONIT" && \
 	cp $MONIT_SCRIPT $MONIT
 else
      if [ -d $SYSTEMD_RUNDIR ]; then
