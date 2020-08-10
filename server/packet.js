@@ -14,12 +14,14 @@ constructor(timestamp, connId) {
     this.error = false;
     // данные пакета
     this.data_arr = [];
+    this.data_buf = "";
 }
 
 receive(data_buf) {
+    this.data_buf = data_buf;
     const data = JSON.parse(data_buf);
     if (data.length < 4) {
-        throw { code: 100500, error: "bad packet" };
+        throw { code: 100500, error: "bad packet"};
     }
 
     this.method = data[1];
@@ -41,6 +43,12 @@ set_error(val) {
     if (val) {
         this.ready = false;
     }
+}
+
+toString() {
+    const { data_buf } = this;
+    let rc = data_buf.toString();
+    return rc;
 }
 
 }

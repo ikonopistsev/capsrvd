@@ -17,7 +17,7 @@ constructor(conn_name, conf) {
     this.delivery_mode = conf.delivery_mode;
     this.conn_name = "@" + conn_name;   
     this.url = url;
-    this.delay = 0;
+    this.delay = delay_step;
     this.message_id = 0;
     this.timestamp = null;
     this.server = null;
@@ -39,24 +39,16 @@ receive() {
 // метод увиеличивает таймаут переподключения
 // при неудачной попытке соединение на 1сек
 reconnect_timeout() {
-    let { delay } = this;
-    // выставляем таймауты переподключения
-    delay += delay_step;
-    if (delay > max_delay) {
-        delay = max_delay;
-    }
-    this.delay = delay;
-    return delay;
+    this.delay = Math.min(this.delay + delay_step, max_delay);
+    return this.delay;
 }
 
 run() {
     const { conn_name, url } = this;
-    let delay = this.reconnect_timeout();
-
     amqp.connect(url, { noDelay: true })
         .then(conn => {
             // сбрасываем обработчки тайматуа
-            this.delay = delay = 0;
+            this.delay = delay_step;
             // в начале вызываетя обработчик ошибки
             // служед для логирования
             conn.on("error", err => {
@@ -71,7 +63,7 @@ run() {
                 // переподключаемся
                 setTimeout(() => {
                     this.run();
-                }, delay);
+                }, this.reconnect_timeout());
             });
 
             u.log("connect", conn_name, "ok");
@@ -103,24 +95,26 @@ run() {
                 });
         })
         .catch(err => {
-                if (err.code) {
-            	    let text = err.code;
-            	    if (err.syscall) {
-            		text += " " + err.syscall;
-            	    }
-            	    
-            	    if (err.address) {
-            		text += " " + err.address;
-            	    }
-            	    
-                    u.error(conn_name, text);
-                } else {
-                    u.error(conn_name, "connect error");
+            if (err.code) {
+                let text = err.code;
+                if (err.syscall) {
+                    text += " " + err.syscall;
                 }
-                this.channel = null;
+            	    
+                if (err.address) {
+                    text += " " + err.address;
+                }
+            	    
+                u.error(conn_name, text);
+            } else {
+                u.error(conn_name, "connect error");
+            }
+            
+            this.channel = null;
+
             setTimeout(() => {
                 this.run();
-            }, delay);
+            }, this.reconnect_timeout());
         });
 }
 
