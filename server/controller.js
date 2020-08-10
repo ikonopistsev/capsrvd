@@ -82,7 +82,7 @@ receive() {
             }
         } else if (p.error) {
             // говорим что пакет с ошибкой
-            u.error(srv_name, "reject", p.toString());
+            u.error(srv_name, p.connId, "reject", p.toString());
             // пропускаем его переходим к следующему
             packet_arr.shift();
         } else {
