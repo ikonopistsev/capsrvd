@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(capsrvd VERSION "1.0.0")
 
+execute_process(COMMAND jq -r .version ../../package.json OUTPUT_VARIABLE FILE_VER)
+string(STRIP ${FILE_VER} FILE_VER)
+
 execute_process(COMMAND jq -r .revision ../../package.json OUTPUT_VARIABLE FILE_REV)
 string(STRIP ${FILE_REV} FILE_REV)
 
@@ -11,10 +14,12 @@ set(CUSTOM_BUILD_VERSION ${FILE_REV})
 
 install(FILES ../capsrvd DESTINATION bin)
 install(FILES ../capsrvd.conf.json.example DESTINATION /etc/capsrvd)
-install(FILES ../gentoo/index.js DESTINATION /usr/lib/capsrvd)
-install(FILES ../logrotate/capsrvd DESTINATION /usr/share/capsrvd)
+install(FILES ../bootstrap/index.js DESTINATION /usr/lib/capsrvd)
+install(FILES ../conf/logrotate DESTINATION /usr/share/capsrvd)
+install(FILES ../conf/systemd DESTINATION /usr/share/capsrvd)
+#install(FILES ../conf/openrc DESTINATION /usr/share/capsrvd)
+install(FILES ../conf/monit DESTINATION /usr/share/capsrvd)
 install(FILES ../keep DESTINATION /var/log/capsrvd)
-install(FILES ../systemd/capsrvd.service DESTINATION /usr/share/capsrvd)
 
 SET(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postinst")
 SET(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postrm")
