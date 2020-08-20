@@ -2,12 +2,12 @@
   "#amqp": {
     "one": {
       "url": "amqp://bob:123@localhost:5672/one",
-      "delivery_mode": 2
+      "deliveryMode": 2
 
     },
     "two": {
       "url": "amqp://max:100500@localhost:5672/two",
-      "delivery_mode": 1
+      "deliveryMode": 1
 
     }
   },
